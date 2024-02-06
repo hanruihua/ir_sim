@@ -1,7 +1,9 @@
 
-## ir_sim 2.0.0
+## ir_sim 1.2.0
 
+Big Version
 
+- Reformulate the whole project framework
 
 
 
@@ -10,9 +12,9 @@
 
 ## ir_sim 1.1.11
 
-Add the function to change the edgecolor
-Add repeat mkdirs
-Fix some bugs
+- Add the function to change the edgecolor
+- Add repeat mkdirs
+- Fix some bugs
 
 ## ir_sim 1.1.10
 

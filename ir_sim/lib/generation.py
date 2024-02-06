@@ -114,26 +114,3 @@ def clip(value, lower, upper):
     """
     return min(upper, max(value, lower))
 
-
-
-# vertices = generate_polygon(center=(250, 250),
-#                             avg_radius=100,
-#                             irregularity=0.35,
-#                             spikiness=0.2,
-#                             num_vertices=16)
-
-# black = (0, 0, 0)
-# white = (255, 255, 255)
-# img = Image.new('RGB', (500, 500), white)
-# im_px_access = img.load()
-# draw = ImageDraw.Draw(img)
-
-# # either use .polygon(), if you want to fill the area with a solid colour
-# draw.polygon(vertices, outline=black, fill=white)
-
-# # or .line() if you want to control the line thickness, or use both methods together!
-# draw.line(vertices + [vertices[0]], width=2, fill=black)
-
-# img.show()
-
-# # now you can save the image (img), or do whatever else you want with it.
