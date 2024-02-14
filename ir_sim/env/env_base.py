@@ -33,7 +33,7 @@ class EnvBase:
         env_para = EnvPara(world_name)
         robot_factory = RobotFactory() 
         obstacle_factory = ObstacleFactory() 
-
+        
         world_kwargs.update(kwargs.get('world', dict()))
         plot_kwargs.update(kwargs.get('plot', dict()))
 
@@ -177,7 +177,7 @@ class EnvBase:
         self.key_vel = np.zeros((2, 1))
 
         print('start to keyboard control')
-        print('w: forward', 's: backforward', 'a: turn left', 'd: turn right', 
+        print('w: forward', 's: back forward', 'a: turn left', 'd: turn right', 
                 'q: decrease linear velocity', 'e: increase linear velocity',
                 'z: decrease angular velocity', 'c: increase angular velocity',
                 'alt+num: change current control robot id', 'r: reset the environment')

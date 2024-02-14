@@ -14,19 +14,24 @@ class EnvPara:
         
         world_file_path = file_check(world_name)
 
-        world_kwargs, plot_kwargs, robot_kwargs_list, robots_kwargs_list, obstacle_kwargs_list, obstacles_kwargs_list  = dict(), dict(), [], [], [], []
+        self.kwargs_parse = { 'world': dict(), 'plot': dict(), 'keyboard': dict(), 'robot': dict(), 'robots': dict(), 'obstacles': dict(), 'landmarks': dict()}
 
         if world_file_path != None:
            
             with open(world_file_path) as file:
                 com_list = yaml.load(file, Loader=yaml.FullLoader)
-                world_kwargs = com_list.get('world', dict())
-                plot_kwargs = com_list.get('plot', dict())
-                keyboard_kwargs = com_list.get('keyboard', dict())
-                robot_kwargs_list = com_list.get('robot', list())
-                robots_kwargs_list = com_list.get('robots', list())
-                obstacle_kwargs_list = com_list.get('obstacle', list())
-                obstacles_kwargs_list = com_list.get('obstacles', list())
+                self.kwargs_parse['world'] = com_list.get('world', dict())
+                self.kwargs_parse['plot'] = com_list.get('plot', dict())
+                self.kwargs_parse['keyboard'] = com_list.get('keyboard', dict())
+                self.kwargs_parse['robot'] = com_list.get('robot', dict())
+                self.kwargs_parse['robots'] = com_list.get('robots', dict())
+                self.kwargs_parse['obstacles'] = com_list.get('obstacles', dict())
+                self.kwargs_parse['landmarks'] = com_list.get('landmarks', dict())
+
+        else:
+            print('File not found!')
+
+
 
         # for python 3.10
         # world_kwargs |= kwargs.get('world', dict())
