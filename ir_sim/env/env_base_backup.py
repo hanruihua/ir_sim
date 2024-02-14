@@ -1,5 +1,5 @@
 import yaml
-from ir_sim.env.env_para import EnvPara
+
 from ir_sim.util.util import file_check
 # from ir_sim.world import world, MultiRobots, MultiObstacles
 from ir_sim.world import world
@@ -30,9 +30,28 @@ class EnvBase:
 
     def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, **kwargs):
 
-        env_para = EnvPara(world_name)
-        robot_factory = RobotFactory() 
-        obstacle_factory = ObstacleFactory() 
+        world_file_path = file_check(world_name)
+        
+        world_kwargs, plot_kwargs, robot_kwargs_list, robots_kwargs_list, obstacle_kwargs_list, obstacles_kwargs_list  = dict(), dict(), [], [], [], []
+
+        if world_file_path != None:
+           
+            with open(world_file_path) as file:
+                com_list = yaml.load(file, Loader=yaml.FullLoader)
+                world_kwargs = com_list.get('world', dict())
+                plot_kwargs = com_list.get('plot', dict())
+                keyboard_kwargs = com_list.get('keyboard', dict())
+                robot_kwargs_list = com_list.get('robot', list())
+                robots_kwargs_list = com_list.get('robots', list())
+                obstacle_kwargs_list = com_list.get('obstacle', list())
+                obstacles_kwargs_list = com_list.get('obstacles', list())
+
+        # for python 3.10
+        # world_kwargs |= kwargs.get('world', dict())
+        # plot_kwargs |= kwargs.get('plot', dict())
+        # robots_kwargs |= kwargs.get('robots', dict())
+        # obstacles_kwargs |= kwargs.get('obstacles', dict())
+        # robot_kwargs |= kwargs.get('robot', dict())
 
         world_kwargs.update(kwargs.get('world', dict()))
         plot_kwargs.update(kwargs.get('plot', dict()))
@@ -44,6 +63,9 @@ class EnvBase:
 
         # init world, robot, obstacles
         self.world = world(**world_kwargs)
+
+        robot_factory = RobotFactory() 
+        obstacle_factory = ObstacleFactory() 
 
         self.robot_list = [ robot_factory.create_robot_single(**robot_kw) for robot_kw in robot_kwargs_list]
         self.robots_list = [ MultiRobots(**robots_kwargs) for robots_kwargs in robots_kwargs_list ]

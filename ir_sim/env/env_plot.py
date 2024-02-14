@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 import logging
-from shapely import minimum_bounding_radius
 from ir_sim.global_param.path_param import path_manager as pm
 from ir_sim.global_param import world_param
 import os
@@ -25,10 +23,10 @@ class EnvPlot:
         self.y_range = y_range
 
         self.init_plot(grid_map, objects, **kwargs)
-        self.corlor_map = {'robot': 'g', 'obstacle': 'k', 'landmark': 'b', 'target': 'pink'}
+        self.color_map = {'robot': 'g', 'obstacle': 'k', 'landmark': 'b', 'target': 'pink'}
         
         # 
-        self.corlor_map.update(kwargs.get('corlor_map', dict()))
+        self.color_map.update(kwargs.get('color_map', dict()))
 
         self.saved_figure_kwargs = saved_figure
         self.saved_ani_kwargs = saved_ani
