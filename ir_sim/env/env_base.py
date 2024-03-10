@@ -24,27 +24,25 @@ class EnvBase:
 
         parameters:
             world_name: the name of the world file, default is None
-    
-    
+     
     '''
 
     def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, **kwargs):
 
-        env_para = EnvPara(world_name)
+        env_para = EnvPara(world_name, **kwargs)
         robot_factory = RobotFactory() 
         obstacle_factory = ObstacleFactory() 
         
-        world_kwargs.update(kwargs.get('world', dict()))
-        plot_kwargs.update(kwargs.get('plot', dict()))
+        # world_kwargs.update(kwargs.get('world', dict()))
+        # plot_kwargs.update(kwargs.get('plot', dict()))
 
-        [robot_kw.update(kw) for (robot_kw, kw) in zip( robot_kwargs_list, kwargs.get('robot', list()) )]
-        [robots_kw.update(kw) for (robots_kw, kw) in zip( robots_kwargs_list, kwargs.get('robots', list()) )]
-        [obstacle_kw.update(kw) for (obstacle_kw, kw) in zip( obstacle_kwargs_list, kwargs.get('obstacle', list()) )]
-        [obstacles_kw.update(kw) for (obstacles_kw, kw) in zip( obstacles_kwargs_list, kwargs.get('obstacles', list()) )]
+        # [robot_kw.update(kw) for (robot_kw, kw) in zip( robot_kwargs_list, kwargs.get('robot', list()) )]
+        # [robots_kw.update(kw) for (robots_kw, kw) in zip( robots_kwargs_list, kwargs.get('robots', list()) )]
+        # [obstacle_kw.update(kw) for (obstacle_kw, kw) in zip( obstacle_kwargs_list, kwargs.get('obstacle', list()) )]
+        # [obstacles_kw.update(kw) for (obstacles_kw, kw) in zip( obstacles_kwargs_list, kwargs.get('obstacles', list()) )]
 
         # init world, robot, obstacles
         self.world = world(**world_kwargs)
-
         self.robot_list = [ robot_factory.create_robot_single(**robot_kw) for robot_kw in robot_kwargs_list]
         self.robots_list = [ MultiRobots(**robots_kwargs) for robots_kwargs in robots_kwargs_list ]
         self.obstacle_list = [ obstacle_factory.create_obstacle_single(**obstacle_kw) for obstacle_kw in obstacle_kwargs_list]

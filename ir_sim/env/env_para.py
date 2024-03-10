@@ -14,22 +14,26 @@ class EnvPara:
         
         world_file_path = file_check(world_name)
 
-        self.kwargs_parse = { 'world': dict(), 'plot': dict(), 'keyboard': dict(), 'robot': dict(), 'robots': dict(), 'obstacles': dict(), 'landmarks': dict()}
+        self.kwargs_parse = { 'world': dict(), 'plot': dict(), 'keyboard': dict(), 'robot': list(), 'robots': list(), 'obstacles': list(), 'landmarks': list()}
 
         if world_file_path != None:
            
             with open(world_file_path) as file:
                 com_list = yaml.load(file, Loader=yaml.FullLoader)
-                self.kwargs_parse['world'] = com_list.get('world', dict())
-                self.kwargs_parse['plot'] = com_list.get('plot', dict())
-                self.kwargs_parse['keyboard'] = com_list.get('keyboard', dict())
-                self.kwargs_parse['robot'] = com_list.get('robot', dict())
-                self.kwargs_parse['robots'] = com_list.get('robots', dict())
-                self.kwargs_parse['obstacles'] = com_list.get('obstacles', dict())
-                self.kwargs_parse['landmarks'] = com_list.get('landmarks', dict())
+
+                for key in self.kwargs_parse.keys():
+                    self.kwargs_parse[key] = com_list.get(key, dict())
 
         else:
             print('File not found!')
+
+
+
+
+
+        
+
+
 
 
 
