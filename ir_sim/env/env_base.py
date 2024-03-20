@@ -16,6 +16,7 @@ from ir_sim.world.obstacles.multi_obstacles import MultiObstacles
 import platform
 import numpy as np
 from pynput import keyboard
+from .env_log import logger
 
 class EnvBase:
 
@@ -27,9 +28,10 @@ class EnvBase:
      
     '''
 
-    def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, **kwargs):
+    def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, **kwargs):
 
-        env_para = EnvPara(world_name, **kwargs)
+        env_para = EnvPara(world_name)
+
         robot_factory = RobotFactory() 
         obstacle_factory = ObstacleFactory() 
         
@@ -42,7 +44,12 @@ class EnvBase:
         # [obstacles_kw.update(kw) for (obstacles_kw, kw) in zip( obstacles_kwargs_list, kwargs.get('obstacles', list()) )]
 
         # init world, robot, obstacles
-        self.world = world(**world_kwargs)
+        self.world = world(**env_para['world'])
+        self.robot_collection = robot_factory(**env_para['robot'], **env_para['robots'])
+        self.obstacle_collection = obstacle_factory(**env_para['obstacle'], **env_para['obstacles'])
+
+        
+
         self.robot_list = [ robot_factory.create_robot_single(**robot_kw) for robot_kw in robot_kwargs_list]
         self.robots_list = [ MultiRobots(**robots_kwargs) for robots_kwargs in robots_kwargs_list ]
         self.obstacle_list = [ obstacle_factory.create_obstacle_single(**obstacle_kw) for obstacle_kw in obstacle_kwargs_list]
@@ -60,6 +67,15 @@ class EnvBase:
 
         self.robot_number = len(self.robot_list + robots_sum_list)
         self.obstacle_number = len(self.obstacle_list + obstacles_sum_list)
+
+        
+
+
+        # default
+        self.robot = self.robot_collection.robot   # default robot
+
+        
+
 
 
         # set env param
