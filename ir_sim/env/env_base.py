@@ -44,9 +44,9 @@ class EnvBase:
         # [obstacles_kw.update(kw) for (obstacles_kw, kw) in zip( obstacles_kwargs_list, kwargs.get('obstacles', list()) )]
 
         # init world, robot, obstacles
-        self.world = world(**env_para['world'])
-        self.robot_collection = robot_factory(**env_para['robot'], **env_para['robots'])
-        self.obstacle_collection = obstacle_factory(**env_para['obstacle'], **env_para['obstacles'])
+        self.world = world(**env_para.parse['world'])
+        self.robot_collection = robot_factory(**env_para.parse['robot'], **env_para.parse['robots'])
+        self.obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
 
         
 

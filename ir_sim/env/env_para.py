@@ -28,6 +28,10 @@ class EnvPara:
         else:
             print('File not found!')
 
+    @property
+    def parse(self):
+        return self._kwargs_parse
+
 
     
 
