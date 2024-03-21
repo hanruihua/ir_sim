@@ -10,7 +10,9 @@ collision_mode = 'stop' #  None: No collision check
 step_time = 0.1
 count = 0
 
-root_path = os.path.dirname(ir_sim.__file__)
+logger = None
+
+
 
 
 

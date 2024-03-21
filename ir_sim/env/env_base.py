@@ -31,16 +31,15 @@ class EnvBase:
     def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, **kwargs):
 
         env_para = EnvPara(world_name)
-
         robot_factory = RobotFactory() 
         obstacle_factory = ObstacleFactory() 
+        world_param = 
         
         # init world, robot, obstacles
         self.world = world(**env_para.parse['world'])
         self.robot_collection = robot_factory(**env_para.parse['robot'], **env_para.parse['robots'])
         self.obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
 
-        
         self.robot_list = [ robot_factory.create_robot_single(**robot_kw) for robot_kw in robot_kwargs_list]
         self.robots_list = [ MultiRobots(**robots_kwargs) for robots_kwargs in robots_kwargs_list ]
         self.obstacle_list = [ obstacle_factory.create_obstacle_single(**obstacle_kw) for obstacle_kw in obstacle_kwargs_list]

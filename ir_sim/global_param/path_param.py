@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class PathManager:
-    root_path: str = sys.path[0]
+    root_path: str = os.path.dirname(ir_sim.__file__)
     ani_buffer_path: str = sys.path[0] + '/animation_buffer'
     ani_path: str = sys.path[0] + '/animation'
     fig_path: str = sys.path[0] + '/figure'
