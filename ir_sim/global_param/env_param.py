@@ -1,3 +1,4 @@
 objects = []
+logger = None
 
 

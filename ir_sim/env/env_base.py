@@ -35,19 +35,20 @@ class EnvBase:
         obstacle_factory = ObstacleFactory() 
 
         # init env setting
-        self.logger = EnvLogger(log_file)  
         self.display = display
         self.disable_all_plot = disable_all_plot
         self.save_ani = save_ani
 
         # init objects (world, obstacle, robot)
         self._world = world(world_name, **env_para.parse['world'])
-        self._env_plot = EnvPlot(self.world.grid_map, self.objects, self.world.x_range, self.world.y_range, **env_para.parse['plot'])
-        self._robot_collection = robot_factory(**env_para.parse['robot'], **env_para.parse['robots'])
+        self._robot_collection = robot_factory   (**env_para.parse['robot'], **env_para.parse['robots'])
         self._obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
-   
+
         # env parameters
+        self.logger = EnvLogger(log_file)  
+        self._env_plot = EnvPlot(self.world.grid_map, self.objects, self.world.x_range, self.world.y_range, **env_para.parse['plot'])
         env_param.objects = self.objects
+        env_param.logger = self.logger
 
         if world_param.control_mode == 'keyboard':
             self.init_keyboard(env_para.parse['keyboard'])
@@ -207,15 +208,20 @@ class EnvBase:
         if id is not None:
             assert isinstance(id, int), 'id should be integer'
             return self.robot_list[id].arrive
-        
-        
-
-
-        return self.robot_list[id].arrive
+        else:
+            assert mode in ['all', 'any'], 'mode should be all or any'
+            return all([obj.arrive for obj in self.robot_list]) if mode == 'all' else any([obj.arrive for obj in self.robot_list])
     
     @property
     def collision(self, id=None, mode=None):
-        return self.robot_list[id].collision
+        
+        if id is not None:
+            assert isinstance(id, int), 'id should be integer'
+            return self.robot_list[id].collision
+        else:
+            assert mode in ['all', 'any'], 'mode should be all or any'
+            return all([obj.collision for obj in self.robot_list]) if mode == 'all' else any([obj.collision for obj in self.robot_list])
+
 
     @property
     def robot_list(self):
@@ -229,20 +235,11 @@ class EnvBase:
         return self.robot._state
     
     def get_lidar_scan(self, id=0):
-        r_list = self.get_current_robots()
-
-        return r_list[id].get_lidar_scan()
+        return self.robot_list[id].get_lidar_scan()
     
-    def get_lidar_points(self, id=0):
-
-        r_list = self.get_current_robots()
-        
-        return r_list[id].get_lidar_points()
-
-        
-
-
-    
+    @property
+    def objects(self):
+        return self._robot_collection.robots + self._obstacle_collection.obstacles
 
     # region: keyboard control
     def on_press(self, key):

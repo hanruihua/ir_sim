@@ -34,11 +34,10 @@ class RobotFactory:
             raise NotImplementedError(f"Robot dynamics {dynamics_name} not implemented")
     
     
-    def create_robot_collection():
-        pass
+    
             
         
-    
+    # def __init__(self, type='diff', shape='circle', **kwargs) -> None:
         
 
     
