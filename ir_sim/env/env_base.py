@@ -16,7 +16,7 @@ from ir_sim.world.obstacles.multi_obstacles import MultiObstacles
 import platform
 import numpy as np
 from pynput import keyboard
-from .env_log import logger
+from .env_logger import EnvLogger
 
 class EnvBase:
 
@@ -28,56 +28,30 @@ class EnvBase:
      
     '''
 
-    def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, **kwargs):
+    def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, log_file='ir_sim.log', **kwargs):
 
         env_para = EnvPara(world_name)
         robot_factory = RobotFactory() 
         obstacle_factory = ObstacleFactory() 
-        world_param = 
-        
-        # init world, robot, obstacles
-        self.world = world(**env_para.parse['world'])
-        self.robot_collection = robot_factory(**env_para.parse['robot'], **env_para.parse['robots'])
-        self.obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
 
-        self.robot_list = [ robot_factory.create_robot_single(**robot_kw) for robot_kw in robot_kwargs_list]
-        self.robots_list = [ MultiRobots(**robots_kwargs) for robots_kwargs in robots_kwargs_list ]
-        self.obstacle_list = [ obstacle_factory.create_obstacle_single(**obstacle_kw) for obstacle_kw in obstacle_kwargs_list]
-        self.obstacles_list = [ MultiObstacles(**obstacles_kw) for obstacles_kw in obstacles_kwargs_list ]
-        
-        # self.objects = self.robot_list + self.robots_list + self.obstacle_list + self.obstacles_list 
-        
-        robots_sum_list = [robot for robots in self.robots_list for robot in robots.robot_list]
-        obstacles_sum_list = [obstacle for obstacles in self.obstacles_list for obstacle in obstacles.obstacle_list]
-
-        self.objects = self.robot_list + robots_sum_list + self.obstacle_list + obstacles_sum_list
-        
-
-        self.env_plot = EnvPlot(self.world.grid_map, self.objects, self.world.x_range, self.world.y_range, **plot_kwargs)
-
-        self.robot_number = len(self.robot_list + robots_sum_list)
-        self.obstacle_number = len(self.obstacle_list + obstacles_sum_list)
-
-        
-
-
-        # default
-        self.robot = self.robot_collection.robot   # default robot
-
-        
-
-
-
-        # set env param
+        # init env setting
+        self.logger = EnvLogger(log_file)  
         self.display = display
         self.disable_all_plot = disable_all_plot
-
         self.save_ani = save_ani
 
+        # init objects (world, obstacle, robot)
+        self._world = world(world_name, **env_para.parse['world'])
+        self._env_plot = EnvPlot(self.world.grid_map, self.objects, self.world.x_range, self.world.y_range, **env_para.parse['plot'])
+        self._robot_collection = robot_factory(**env_para.parse['robot'], **env_para.parse['robots'])
+        self._obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
+   
+        # env parameters
         env_param.objects = self.objects
 
         if world_param.control_mode == 'keyboard':
-            self.init_keyboard(keyboard_kwargs)
+            self.init_keyboard(env_para.parse['keyboard'])
+
 
         if full:
             mode = platform.system()
@@ -94,24 +68,16 @@ class EnvBase:
                 # self.env_plot.fig.canvas.manager.window.showMaximized()
                 mng = plt.get_current_fig_manager()
                 mng.full_screen_toggle()
-        # # thread
-        # self.step_thread = threading.Thread(target=self.step)
-    
-    # def start(self, duration=500, **kwargs):
+        
 
-    #     self.step_thread.start()
-
-    #     while world_param.count < duration:
-    #         print(world_param.count)
-    #         self.render(world_param.step_time)
-
+    ## magic methods
     def __del__(self):
         print('Simulated Environment End')
 
-    def start(self, duration=500):
-        pass
-    
-    # step
+    def __str__(self):
+        return f'Environment: {self._world.name}'
+
+    ## step
     def step(self, action=None, action_id=0, **kwargs):
 
         if isinstance(action, list):
@@ -134,7 +100,8 @@ class EnvBase:
         self.objects[obj_id].step(action)
         [ obj.step() for obj in self.objects if obj._id != obj_id]
 
-        
+
+    ## render     
     def render(self, interval=0.05, figure_kwargs=dict(), **kwargs):
 
         # figure_args: arguments when saving the figures for animation, see https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.savefig.html for detail
@@ -154,17 +121,25 @@ class EnvBase:
     def show(self):
         self.env_plot.show()
 
-    # def clear(self):
-    #     pass
-
-    # def init_plot(self, **kwargs):
-    #     pass
-
+    
     def reset_plot(self):
         plt.cla()
         self.env_plot.init_plot(self.world.grid_map, self.objects)
 
 
+    # draw
+    def draw_trajectory(self, traj, traj_type='g-', **kwargs):
+        self.env_plot.draw_trajectory(traj, traj_type, **kwargs)
+
+    def draw_points(self, points, s=30, c='b', **kwargs):
+        self.env_plot.draw_points(points, s, c, **kwargs)
+
+
+    def draw_box(self, vertex, refresh=True, **kwargs):
+        self.env_plot.draw_box(vertex, refresh, **kwargs)
+
+
+    ## keyboard control
     def init_keyboard(self, keyboard_kwargs=dict()):
 
         vel_max = keyboard_kwargs.get('vel_max', [3.0, 1.0])
@@ -190,18 +165,7 @@ class EnvBase:
         self.listener.start()
 
 
-
-    def draw_trajectory(self, traj, traj_type='g-', **kwargs):
-        self.env_plot.draw_trajectory(traj, traj_type, **kwargs)
-
-    def draw_points(self, points, s=30, c='b', **kwargs):
-        self.env_plot.draw_points(points, s, c, **kwargs)
-
-
-    def draw_box(self, vertex, refresh=True, **kwargs):
-        self.env_plot.draw_box(vertex, refresh, **kwargs)
-
-
+    
     def end(self, ending_time=1, **kwargs):
 
         if self.save_ani:
@@ -232,75 +196,35 @@ class EnvBase:
         [obj.reset() for obj in self.objects]
         
 
-
     def get_robot_info(self, id=0):
         return self.robot_list[id].get_info()
 
 
+   
+    @property
+    def arrive(self, id=None, mode=None):
 
-    #     def reset(self, mode='now', **kwargs):
-    #     # mode: 
-    #     #   default: reset the env now
-    #     #   any: reset all the env when any robot done
-    #     #   all: reset all the env when all robots done
-    #     #   single: reset one robot who has done, depending on the done list
-    #     if mode == 'now':
-    #         self.reset_all() 
-    #     else:
-    #         done_list = self.done_list(**kwargs)
-    #         if mode == 'any' and any(done_list): self.reset_all()
-    #         elif mode == 'all' and all(done_list): self.reset_all()
-    #         elif mode == 'single': 
-    #             [self.reset_single(i) for i, done in enumerate(done_list) if done]
-
-    # def end(self, ani_name='animation', fig_name='fig.png', ending_time = 3, suffix='.gif', keep_len=30, rm_fig_path=True, fig_kwargs=dict(), ani_kwargs=dict(), **kwargs):
+        if id is not None:
+            assert isinstance(id, int), 'id should be integer'
+            return self.robot_list[id].arrive
         
-    #     # fig_kwargs: arguments when saving the figures for animation, see https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.savefig.html for detail
-    #     # ani_kwargs: arguments for animations(gif): see https://imageio.readthedocs.io/en/v2.8.0/format_gif-pil.html#gif-pil for detail
-    #     if self.control_mode == 'keyboard': self.listener.stop()
         
-    #     show = kwargs.get('show', self.display)
-        
-    #     if not self.disable_all_plot:
 
-    #         if self.save_ani:
-    #             saved_ani_kwargs = {'subrectangles': True}
-    #             saved_ani_kwargs.update(ani_kwargs) 
-    #             self.save_animate(ani_name, suffix, keep_len, rm_fig_path, **saved_ani_kwargs)
 
-    #         if self.save_fig or show:
-    #             self.draw_components(self.ax, mode='dynamic', **kwargs)
-            
-    #         if self.save_fig: 
-    #             if not self.fig_path.exists(): self.fig_path.mkdir()
+        return self.robot_list[id].arrive
+    
+    @property
+    def collision(self, id=None, mode=None):
+        return self.robot_list[id].collision
 
-    #             self.fig.savefig(str(self.fig_path) + '/' + fig_name, bbox_inches=self.bbox_inches, dpi=self.fig_dpi, **fig_kwargs)
-
-    #         if show:
-    #             plt.show(block=False)
-    #             print(f'Figure will be closed within {ending_time:d} seconds.')
-    #             plt.pause(ending_time)
-    #             plt.close()
-
+    @property
+    def robot_list(self):
+        return [ obj for obj in self.objects if obj.role == 'robot']
 
     @property
     def robot(self):
-        robot_list = [ obj for obj in self.objects if obj.role == 'robot']
-
-        return robot_list[0]
-
-    @property
-    def arrive(self):
-        return self.robot.arrive
+        return self.robot_list[0]
     
-    @property
-    def collision(self):
-        return self.robot.collision
-
-
-    def get_current_robots(self):
-        return [obj for obj in self.objects if obj.role == 'robot']
-
     def get_robot_state(self):
         return self.robot._state
     

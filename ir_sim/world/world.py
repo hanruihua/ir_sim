@@ -6,7 +6,7 @@ import matplotlib.image as mpimg
 from skimage.color import rgb2gray
 
 class world:
-    def __init__(self, height=10, width=10, step_time=0.1, sample_time=0.1, offset=[0, 0], control_mode='auto', collision_mode='stop',  obstacle_map=None) -> None:
+    def __init__(self, name='world', height=10, width=10, step_time=0.1, sample_time=0.1, offset=[0, 0], control_mode='auto', collision_mode='stop',  obstacle_map=None) -> None:
         
         '''
         the world object is the main object of the simulation, it manages all the other objects and maps in the simulation
@@ -27,6 +27,7 @@ class world:
                             'keyboard'
         '''
 
+        self.name = name
         self.height = height
         self.width = width
         self.step_time = step_time

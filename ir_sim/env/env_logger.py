@@ -3,15 +3,16 @@ import sys
 
 
 class EnvLogger:
-    def __init__(self, log_file='ir_sim_error.log'):
+    def __init__(self, log_file='ir_sim_error.log', log_level='WARNING'):
 
         logger.remove()
-        logger.add(sys.stdout, level="ERROR", format="<green>{time:YYYY-MM-DD HH:mm}</green> | " "<level>{level: <8}</level> | " "<level>{message}</level>")
+        logger.add(sys.stdout, level=log_level, format="<green>{time:YYYY-MM-DD HH:mm}</green> | " "<level>{level: <8}</level> | " "<level>{message}</level>")
 
         if log_file is not None:
-            logger.add(log_file, level="ERROR")
+            logger.add(log_file, level=log_level)
 
-    def log(self, msg):
+
+    def info(self, msg):
         logger.info(msg)
 
     def error(self, msg):
@@ -23,11 +24,11 @@ class EnvLogger:
     def warning(self, msg):
         logger.warning(msg)
 
-    def close(self):
-        logger.remove(self.log_file)
-        logger.remove(None)
+    # def close(self):
+    #     logger.remove(self.log_file)
+    #     logger.remove(None)
 
-    def __del__(self):
-        self.close()
+    # def __del__(self):
+    #     self.close()
 
 
