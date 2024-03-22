@@ -1,3 +1,3 @@
-from ir_sim.lib.dynamics import differential_wheel_dynamics, ackermann_dynamics
+from ir_sim.lib.kinematics import differential_wheel_kinematics, ackermann_kinematics
 
-dynamics_factory = {'diff': differential_wheel_dynamics, 'acker': ackermann_dynamics}
+kinematics_factory = {'diff': differential_wheel_kinematics, 'acker': ackermann_kinematics}

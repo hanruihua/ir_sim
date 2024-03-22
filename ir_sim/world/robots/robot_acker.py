@@ -10,13 +10,13 @@ import matplotlib as mpl
 
 class RobotAcker(ObjectBase):
     def __init__(self, shape='rectangle', shape_tuple=None, **kwargs):
-        super(RobotAcker, self).__init__(shape=shape, shape_tuple=shape_tuple, dynamics='acker', role='robot', **kwargs)
+        super(RobotAcker, self).__init__(shape=shape, shape_tuple=shape_tuple, kinematics='acker', role='robot', **kwargs)
 
         self.wheelbase = kwargs['wheelbase']
         self.info.add_property('wheelbase', self.wheelbase)
         
 
-    def _dynamics(self, velocity, mode='steer', noise=False, alpha=[0.03, 0, 0, 0.03, 0, 0], **kwargs):
+    def _kinematics(self, velocity, mode='steer', noise=False, alpha=[0.03, 0, 0, 0.03, 0, 0], **kwargs):
         
         phi = self._state[2, 0]
         psi = self._state[3, 0]

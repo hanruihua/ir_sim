@@ -7,7 +7,7 @@ world:
   collision_mode: 'unobstructed'  # 'stop', 'unobstructed', 'reactive'
 
 robot:
-  - dynamics: {name: 'diff'}  # omni, diff, acker
+  - kinematics: {name: 'diff'}  # omni, diff, acker
     shape: {name: 'circle', radius: 0.2}  # radius
     # shape: {name: 'rectangle', length: 0.5, width: 0.2}  # radius
     state: [1, 1, 0]  

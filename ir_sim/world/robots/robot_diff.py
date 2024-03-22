@@ -8,33 +8,22 @@ import matplotlib.transforms as mtransforms
 
 class RobotDiff(ObjectBase):
     def __init__(self, shape='circle', shape_tuple=None, color='g', **kwargs):
-        super(RobotDiff, self).__init__(shape=shape, shape_tuple=shape_tuple, dynamics='diff', role='robot', color=color, **kwargs)
+        super(RobotDiff, self).__init__(shape=shape, shape_tuple=shape_tuple, kinematics='diff', role='robot', color=color, **kwargs)
 
 
-    def _dynamics(self, velocity, mode='diff', noise=False, alpha=[0.03, 0, 0, 0.03, 0, 0],  **kwargs):
+    def _kinematics(self, velocity, noise=False, alpha=[0.03, 0, 0, 0.03, 0, 0],  **kwargs):
         
-        # def differential_wheel_dynamics(state, velocity, step_time, noise=False, alpha = [0.03, 0, 0, 0.03, 0, 0]):
+        # def differential_wheel_kinematics(state, velocity, step_time, noise=False, alpha = [0.03, 0, 0, 0.03, 0, 0]):
 
         '''
-        The dynamics function for differential wheel robot
+        The kinematics function for differential wheel robot
 
         state: [x, y, theta]   (3*1) vector
         velocity: [linear, angular]  (2*1) vector
-        mode: 'diff', 'omni', 'wheel', 
         '''
         
         assert velocity.shape==(2, 1)
         assert self._state.shape==(3, 1)
-
-        # cur_state = self._state[0:3]
-
-        if mode == 'diff':
-            pass
-        elif mode == 'omni':
-            pass
-        elif mode == 'wheel':
-            pass
-
 
         if noise:
             std_linear = np.sqrt(alpha[0] * (velocity[0, 0] ** 2) + alpha[1] * (velocity[1, 0] ** 2))

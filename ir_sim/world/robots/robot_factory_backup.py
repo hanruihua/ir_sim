@@ -6,32 +6,32 @@ from ir_sim.world import ObjectBase
 
 class RobotFactory:
 
-    def create_robot(self, dynamics_name, dynamics_dict=dict(), shape=dict(), **kwargs) -> ObjectBase:
+    def create_robot(self, kinematics_name, kinematics_dict=dict(), shape=dict(), **kwargs) -> ObjectBase:
 
-        if dynamics_name == 'diff':
-            return RobotDiff.create_with_shape('diff', shape, dynamics_dict=dynamics_dict, **kwargs)
-        elif dynamics_name == 'acker':
-            return RobotAcker.create_with_shape('acker', shape, dynamics_dict=dynamics_dict, **kwargs)
-        elif dynamics_name == 'omni':
+        if kinematics_name == 'diff':
+            return RobotDiff.create_with_shape('diff', shape, kinematics_dict=kinematics_dict, **kwargs)
+        elif kinematics_name == 'acker':
+            return RobotAcker.create_with_shape('acker', shape, kinematics_dict=kinematics_dict, **kwargs)
+        elif kinematics_name == 'omni':
             # return RobotOmni(**kwargs)
             pass
         else:
-            raise NotImplementedError(f"Robot dynamics {dynamics_name} not implemented")
+            raise NotImplementedError(f"Robot kinematics {kinematics_name} not implemented")
         
     
-    def create_robot_single(self, dynamics, shape=dict(), **kwargs):
+    def create_robot_single(self, kinematics, shape=dict(), **kwargs):
 
-        dynamics_name = dynamics.pop('name', 'omni')
+        kinematics_name = kinematics.pop('name', 'omni')
         
-        if dynamics_name == 'diff':
-            return RobotDiff.create_with_shape('diff', shape, dynamics_dict=dynamics, **kwargs)
-        elif dynamics_name == 'acker':
-            return RobotAcker.create_with_shape('acker', shape, dynamics_dict=dynamics, **kwargs)
-        elif dynamics_name == 'omni':
+        if kinematics_name == 'diff':
+            return RobotDiff.create_with_shape('diff', shape, kinematics_dict=kinematics, **kwargs)
+        elif kinematics_name == 'acker':
+            return RobotAcker.create_with_shape('acker', shape, kinematics_dict=kinematics, **kwargs)
+        elif kinematics_name == 'omni':
             # return RobotOmni(**kwargs)
             pass
         else:
-            raise NotImplementedError(f"Robot dynamics {dynamics_name} not implemented")
+            raise NotImplementedError(f"Robot kinematics {kinematics_name} not implemented")
     
     
     

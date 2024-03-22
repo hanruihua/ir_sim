@@ -4,10 +4,10 @@ from ir_sim.world.object_base import ObjectBase
 from ir_sim.lib.generation import generate_polygon
 
 class MultiObjects:
-    def __init__(self, dynamics, number, distribution, **kwargs) -> None:
+    def __init__(self, kinematics, number, distribution, **kwargs) -> None:
         
         self.number = number
-        self.dynamics = dynamics
+        self.kinematics = kinematics
 
         # self.object_list = [object_class(**kwargs) for _ in range(number)]
         self.state_list, self.shape_list = self.generate_state_shape(distribution, **kwargs)
@@ -17,10 +17,10 @@ class MultiObjects:
 
         if self.behavior_list is None:
 
-            self.object_list = [ ObjectBase.create_with_shape(dynamics, shape, state=state, **kwargs) for state, shape in zip(self.state_list, self.shape_list) ]
+            self.object_list = [ ObjectBase.create_with_shape(kinematics, shape, state=state, **kwargs) for state, shape in zip(self.state_list, self.shape_list) ]
 
         else:
-            self.object_list = [ ObjectBase.create_with_shape(dynamics, shape, state=state, behavior=behavior, **kwargs) for state, shape, behavior in zip(self.state_list, self.shape_list, self.behavior_list) ]
+            self.object_list = [ ObjectBase.create_with_shape(kinematics, shape, state=state, behavior=behavior, **kwargs) for state, shape, behavior in zip(self.state_list, self.shape_list, self.behavior_list) ]
 
 
     def __add__(self, other):
@@ -36,7 +36,6 @@ class MultiObjects:
     def generate_state_shape(self, distribution_dict, **kwargs):
 
 
-        
         if distribution_dict is None:
             # default
             state_list = kwargs['states']
@@ -55,27 +54,9 @@ class MultiObjects:
            
         shape_list = kwargs['shapes']
 
-
-        # if distribution_dict.get('random_shape', False):
-            
-        #     temp_shape_list = kwargs['shapes']
-        #     shape_list = []
-
-        #     for shape_dict in temp_shape_list:
-                
-        #         if shape_dict['name'] == 'polygon':
-                    
-        #             shape_number = shape_dict.get('random_number', self.number)
-        #             vertices_list = self.random_generate_polygon(shape_number, **distribution_dict)
-
-        #             # poly_shape_list = extend_list([shape_dict], self.number)
-        #             poly_shape_list = [ {'name': 'polygon', 'vertices': vertices_list[i]}  for i in range(shape_number) ]
-        #             shape_list += poly_shape_list
-
         if distribution_dict.get('random_bear', False):
             pass
 
-        
         state_list = extend_list(state_list, self.number)
         shape_list = extend_list(shape_list, self.number)
         
@@ -115,45 +96,6 @@ class MultiObjects:
 
 
 
-        
-
-            
-    # def set_attributes(self, **kwargs):
-        
-    #     states_kwargs = kwargs.get('states', dict())
-    #     shapes_kwargs = kwargs.get('shapes', dict())
-
-    #     self.set_states(**states_kwargs)
-    #     self.set_shapes(**shapes_kwargs)
-
-    # def set_states(self, mode='manual', random_bear=False, **kwargs):
-        
-    #     if mode == 'manual':
-    #         default = [[i, 0] for i in range(self.number)]
-    #         states = kwargs.get('states', default)
-        
-    #     elif mode == 'random':
-
-    #         low = kwargs.get('low', [0, 0, 0])
-    #         high = kwargs.get('high', [10, 10, 2*np.pi])
-
-    #         states = np.random.uniform(low=low, high=high, size=(self.number, 2))
-
-    #     elif mode == 'circular':
-    #         pass
-        
-
-    #     states = extend_list(states, self.number)
-    #     [obj.set_state(state) for obj, state in zip(self.object_list, states)]
-
-
-    # def set_shapes(self, mode='manual', random_bear=False):
-        
-    #     if mode == 'manual':
-    #         pass
-        
-    #     elif mode == 'random':
-    #         pass 
 
        
     

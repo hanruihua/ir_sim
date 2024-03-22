@@ -31,7 +31,7 @@ class EnvBase:
     def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, log_file='ir_sim.log', **kwargs):
 
         env_para = EnvPara(world_name)
-        robot_factory = RobotFactory() 
+        
         obstacle_factory = ObstacleFactory() 
 
         # init env setting
@@ -41,7 +41,11 @@ class EnvBase:
 
         # init objects (world, obstacle, robot)
         self._world = world(world_name, **env_para.parse['world'])
-        self._robot_collection = robot_factory   (**env_para.parse['robot'], **env_para.parse['robots'])
+
+        robot_factory = RobotFactory(env_para.parse['robot'], env_para.parse['robots']) 
+        self._robot_collection = robot_factory.create_from_parse()
+
+
         self._obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
 
         # env parameters

@@ -18,7 +18,7 @@ class Behavior:
         if self.behavior_dict is None:
             return np.zeros((2, 1))
 
-        if self.object_info.dynamics == 'diff':
+        if self.object_info.kinematics == 'diff':
             if self.behavior_dict['name'] == 'dash':
 
                 angle_tolerance = self.behavior_dict.get('angle_tolerance', 0.1)
@@ -34,7 +34,7 @@ class Behavior:
                 behavior_vel = DiffDash(state, goal, max_vel, angle_tolerance, goal_threshold)
 
             
-        elif self.object_info.dynamics == 'acker':
+        elif self.object_info.kinematics == 'acker':
 
             if self.behavior_dict['name'] == 'dash':
 
@@ -43,7 +43,7 @@ class Behavior:
 
                 behavior_vel = AckerDash(state, goal, max_vel, angle_tolerance, goal_threshold)
 
-        elif self.object_info.dynamics == 'omni':
+        elif self.object_info.kinematics == 'omni':
             pass
             
                 

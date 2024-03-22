@@ -6,7 +6,7 @@ world:
   offset: [0, 0] # the offset of the world on x and y 
 
 robot:  
-  - dynamics: {name: 'acker'}  # omni, diff, acker
+  - kinematics: {name: 'acker'}  # omni, diff, acker
     shape: {name: 'rectangle', length: 4.6, width: 1.6, wheelbase: 3}
     state: [1, 1, 0, 0]
     goal: [40, 40, 0]

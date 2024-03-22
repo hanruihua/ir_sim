@@ -5,36 +5,36 @@ from ir_sim.world.obstacles.obstacle_static import ObstacleStatic
 
 class ObstacleFactory:
 
-    def create_obstacle(self, dynamics_dict, shape=dict(), **kwargs):
+    def create_obstacle(self, kinematics_dict, shape=dict(), **kwargs):
         
-        if dynamics_dict is not None:
-            dynamics_name = dynamics_dict.pop('name', 'diff')
+        if kinematics_dict is not None:
+            kinematics_name = kinematics_dict.pop('name', 'diff')
         else:
-            dynamics_name = None
-        # dynamics_name, dynamics_dict=dict(),  
+            kinematics_name = None
+        # kinematics_name, kinematics_dict=dict(),  
 
-        if dynamics_name == 'diff':
-            return ObstacleDiff.create_with_shape(dynamics_name, shape, dynamics_dict=dynamics_dict, **kwargs)
-        elif dynamics_name == 'acker':
+        if kinematics_name == 'diff':
+            return ObstacleDiff.create_with_shape(kinematics_name, shape, kinematics_dict=kinematics_dict, **kwargs)
+        elif kinematics_name == 'acker':
             pass
-        elif dynamics_name == 'omni':
+        elif kinematics_name == 'omni':
             pass
         else:
-            return ObstacleStatic.create_with_shape(dynamics_name, shape, dynamics_dict=dynamics_dict, **kwargs)
+            return ObstacleStatic.create_with_shape(kinematics_name, shape, kinematics_dict=kinematics_dict, **kwargs)
              
 
-    def create_obstacle_single(self, dynamics=None, shape=dict(), **kwargs):
+    def create_obstacle_single(self, kinematics=None, shape=dict(), **kwargs):
 
-        if dynamics is None:
-            return ObstacleStatic.create_with_shape(None, shape, dynamics_dict=dict(), **kwargs)
+        if kinematics is None:
+            return ObstacleStatic.create_with_shape(None, shape, kinematics_dict=dict(), **kwargs)
 
-        dynamics_name = dynamics.pop('name', 'omni')
+        kinematics_name = kinematics.pop('name', 'omni')
         
-        if dynamics_name == 'diff':
-            return ObstacleDiff.create_with_shape('diff', shape, dynamics_dict=dynamics, **kwargs)
-        elif dynamics_name == 'acker':
+        if kinematics_name == 'diff':
+            return ObstacleDiff.create_with_shape('diff', shape, kinematics_dict=kinematics, **kwargs)
+        elif kinematics_name == 'acker':
             pass
-        elif dynamics_name == 'omni':
+        elif kinematics_name == 'omni':
             # return RobotOmni(**kwargs)
             pass
         

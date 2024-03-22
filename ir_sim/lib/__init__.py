@@ -1,3 +1,3 @@
-from ir_sim.lib.dynamics import differential_wheel_dynamics
+from ir_sim.lib.kinematics import differential_wheel_kinematics
 
 

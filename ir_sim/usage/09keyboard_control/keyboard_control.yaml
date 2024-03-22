@@ -8,7 +8,7 @@ world:
   control_mode: 'keyboard'  # 'keyboard', 'auto'
 
 robot:
-  - dynamics: {name: 'acker'}  # omni, diff, acker
+  - kinematics: {name: 'acker'}  # omni, diff, acker
     shape: {name: 'rectangle', length: 4.6, width: 1.6, wheelbase: 3}
     state: [5, 5, 0, 0]
     goal: [40, 40, 0]

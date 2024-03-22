@@ -7,8 +7,9 @@ world:
   collision_mode: 'stop'  # 'stop', 'unobstructed', 'reactive'
   control_mode: 'auto'  # 'keyboard', 'auto'
 
+
 robots:
-  - dynamics: {name: 'diff'}
+  - kinematics: {name: 'diff'}
     number: 2
     distribution: {mode: 'manual'}
     shapes: 

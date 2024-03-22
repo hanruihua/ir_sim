@@ -2,10 +2,10 @@ import numpy as np
 from math import cos, sin, tan
 from ir_sim.util.util import WrapToPi
 
-def differential_wheel_dynamics(state, velocity, step_time, noise=False, alpha = [0.03, 0, 0, 0.03, 0, 0]):
+def differential_wheel_kinematics(state, velocity, step_time, noise=False, alpha = [0.03, 0, 0, 0.03, 0, 0]):
 
     '''
-    The dynamics function for differential wheel robot
+    The kinematics function for differential wheel robot
 
     state: [x, y, theta]   (3*1) vector
     velocity: [linear, angular]  (2*1) vector
@@ -33,7 +33,7 @@ def differential_wheel_dynamics(state, velocity, step_time, noise=False, alpha =
 
     return next_state
 
-def ackermann_dynamics(state, velocity, step_time, mode, wheelbase, psi_limit, noise=False):
+def ackermann_kinematics(state, velocity, step_time, mode, wheelbase, psi_limit, noise=False):
 
     # reference: Lynch, Kevin M., and Frank C. Park. Modern Robotics: Mechanics, Planning, and Control. 1st ed. Cambridge, MA: Cambridge University Press, 2017.
 

@@ -3,7 +3,7 @@ from ir_sim.world import ObjectBase
 
 class RobotDiff(ObjectBase):
     def __init__(self, shape='circle', shape_tuple=None, **kwargs):
-        super(RobotDiff, self).__init__(shape=shape, shape_tuple=shape_tuple, dynamics='diff', role='robot', **kwargs)
+        super(RobotDiff, self).__init__(shape=shape, shape_tuple=shape_tuple, kinematics='diff', role='robot', **kwargs)
 
 
     @classmethod
@@ -24,7 +24,7 @@ class RobotDiff(ObjectBase):
 
 
         
-# shape='circle', shape_tuple=(0, 0, radius), dynamics='diff', role='robot', **kwargs
+# shape='circle', shape_tuple=(0, 0, radius), kinematics='diff', role='robot', **kwargs
 
     def plot(self):
         pass

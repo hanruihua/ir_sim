@@ -18,7 +18,7 @@ from shapely import Point, Polygon, LineString, minimum_bounding_radius
 class ObjectInfo:
     id: int
     shape: str
-    dynamics: str
+    kinematics: str
     role: str
     color: str
     static: bool
@@ -38,7 +38,7 @@ class ObjectBase:
     id_iter = itertools.count()
     vel_dim = (2, 1)
 
-    def __init__(self, shape: str='circle', shape_tuple=None, state=[0, 0, 0], velocity=[0, 0], goal=[10, 10, 0], dynamics: str='omni', role: str='obstacle', color='k', static=False, vel_min=[-1, -1], vel_max=[1, 1], acce=[inf, inf], angle_range=[-pi, pi], behavior=None, goal_threshold=0.1, sensors=None, dynamics_dict=dict(), arrive_mode='state', description=None, **kwargs) -> None:
+    def __init__(self, shape: str='circle', shape_tuple=None, state=[0, 0, 0], velocity=[0, 0], goal=[10, 10, 0], kinematics: str='omni', role: str='obstacle', color='k', static=False, vel_min=[-1, -1], vel_max=[1, 1], acce=[inf, inf], angle_range=[-pi, pi], behavior=None, goal_threshold=0.1, sensors=None, kinematics_dict=dict(), arrive_mode='state', description=None, **kwargs) -> None:
 
         '''
         parameters:
@@ -52,7 +52,7 @@ class ObjectBase:
 
             state: the state of the object, list or numpy. default is [0, 0, 0], [x, y, theta]
             velocity: the velocity of the object, list or numpy. default is [0, 0], [vx, vy]
-            dynamics: the moving dynamics of the object, including omni, diff, acker, custom; default omni, if custom, 
+            kinematics: the moving kinematics of the object, including omni, diff, acker, custom; default omni, if custom, 
 
             static: whether static object; default False
 
@@ -87,8 +87,8 @@ class ObjectBase:
         
         self._geometry = self.geometry_transform(self._init_geometry, self._state) 
 
-        self.dynamics = dynamics
-        self.dynamics_dict = dynamics_dict
+        self.kinematics = kinematics
+        self.kinematics_dict = kinematics_dict
     
         # flag
         self.stop_flag = False
@@ -101,7 +101,7 @@ class ObjectBase:
         self.vel_max = np.c_[vel_max]
         self.color = color
         self.role = role
-        self.info = ObjectInfo(self._id, shape, dynamics, role, color, static, np.c_[goal], np.c_[vel_min], np.c_[vel_max], np.c_[acce], np.c_[angle_range], goal_threshold)
+        self.info = ObjectInfo(self._id, shape, kinematics, role, color, static, np.c_[goal], np.c_[vel_min], np.c_[vel_max], np.c_[acce], np.c_[angle_range], goal_threshold)
         
         self.length = kwargs.get('length', None)
         self.width = kwargs.get('width', None)
@@ -145,7 +145,7 @@ class ObjectBase:
 
 
     @classmethod
-    def create_with_shape(cls, dynamics_name, shape_dict, **kwargs):
+    def create_with_shape(cls, kinematics_name, shape_dict, **kwargs):
 
         
         shape_name = shape_dict.get('name', 'circle')   
@@ -158,13 +158,13 @@ class ObjectBase:
 
         elif shape_name == 'rectangle':
 
-            if dynamics_name == 'diff':
+            if kinematics_name == 'diff':
                 length = shape_dict.get('length', 0.2)
                 width = shape_dict.get('width', 0.1)
 
                 return cls(shape='polygon', shape_tuple=[(-length/2, -width/2), (length/2, -width/2), (length/2, width/2), (-length/2, width/2)], length=length, width=width,**kwargs)
             
-            elif dynamics_name == 'acker':
+            elif kinematics_name == 'acker':
 
                 length = shape_dict.get('length', 4.6)
                 width = shape_dict.get('width', 1.6)
@@ -222,7 +222,7 @@ class ObjectBase:
 
             behavior_vel = self.gen_behavior_vel(velocity, )
 
-            new_state = self._dynamics(behavior_vel, **self.dynamics_dict, **kwargs)
+            new_state = self._kinematics(behavior_vel, **self.kinematics_dict, **kwargs)
             next_state = self.mid_process(new_state)
 
             self._state = next_state
@@ -243,7 +243,7 @@ class ObjectBase:
         [sensor.step(self._state[0:3]) for sensor in self.sensors]
     
 
-    def _dynamics(self, velocity, **kwargs):
+    def _kinematics(self, velocity, **kwargs):
         # default is omni
         if not self.static:
             new_state = self._state[0:2] + velocity * world_param.step_time
