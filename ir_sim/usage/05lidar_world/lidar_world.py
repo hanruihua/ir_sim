@@ -11,4 +11,4 @@ for i in range(300):
         print('done')
         break
 
-env.end(1)
+env.end(3)

@@ -46,7 +46,7 @@ class ObjectFactory:
 
     def create_obstacle(self, kinematics=dict(), shape=dict(), **kwargs):
         
-        kinematics_name = kinematics.get('name', 'omni')
+        kinematics_name = kinematics.get('name', None)
   
         if kinematics_name == 'diff':
             return ObstacleDiff.create_with_shape(kinematics_name, shape, kinematics_dict=kinematics, **kwargs)

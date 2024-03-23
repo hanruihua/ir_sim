@@ -36,10 +36,10 @@ obstacle:
   - shape: {name: 'circle', radius: 1.0}  # radius
     state: [5, 5, 0]  
   
-  - shape: {name: 'rectangle', length: 1.5, width: 1.2}  # radius
+  - shape: {name: 'rectangle', length: 1.5, width: 1.2}  # length, width
     state: [6, 5, 1] 
   
-  - shape: {name: 'linestring', length: 1.5, width: 1.2}  # radius
+  - shape: {name: 'linestring', vertices: [[], []]}  # vertices
     state: [6, 5, 1] 
 
   # - shape: {name: 'circle', radius: 0.4}  # radius

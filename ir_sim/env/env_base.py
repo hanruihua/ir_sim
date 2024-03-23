@@ -41,8 +41,8 @@ class EnvBase:
         # init objects (world, obstacle, robot)
         self._world = world(world_name, **env_para.parse['world'])
 
-        self._robot_collection = object_factory.create_from_parse(env_para.parse['robot'], env_para.parse['robots'])
-        self._obstacle_collection = object_factory.create_from_parse(env_para.parse['obstacle'], env_para.parse['obstacles'])
+        self._robot_collection = object_factory.create_from_parse(env_para.parse['robot'], env_para.parse['robots'], 'robot')
+        self._obstacle_collection = object_factory.create_from_parse(env_para.parse['obstacle'], env_para.parse['obstacles'], 'obstacle')
         self._object_collection = self._robot_collection + self._obstacle_collection
 
         # env parameters

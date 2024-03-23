@@ -14,7 +14,6 @@ from ir_sim.lib.generation import random_generate_polygon
 from ir_sim.world.sensors.sensor_factory import SensorFactory
 from shapely import Point, Polygon, LineString, minimum_bounding_radius
 
-
 @dataclass
 class ObjectInfo:
     id: int
@@ -304,7 +303,7 @@ class ObjectBase:
         new_collision_flag = any(collision_flags)
 
         if new_collision_flag and not self.collision_flag:
-            env_param.logger.warning("object {} is collided with".format(self.id))
+            env_param.logger.warning( self.role + "{} is collided".format(self.id))
             
         self.collision_flag = new_collision_flag
 
@@ -471,11 +470,18 @@ class ObjectBase:
                 object_patch = mpl.patches.Circle(xy=(x, y), radius = self.radius, color = self.color)
                 object_patch.set_zorder(3)
 
+                ax.add_patch(object_patch)
+
             elif self.shape == 'polygon':
                 object_patch = mpl.patches.Polygon(xy=self.vertices.T, color=self.color)
                 object_patch.set_zorder(3)
 
-            ax.add_patch(object_patch)
+                ax.add_patch(object_patch)
+
+            elif self.shape == 'linestring':
+                # line = mpl.lines.Line2D(self.vertices[0, :], self.vertices[1, :], color=self.color)
+                # line.set_zorder(3)
+
             self.plot_patch_list.append(object_patch)
         
         else:
@@ -583,7 +589,7 @@ class ObjectBase:
 
     def done(self):
 
-        if self.stop_flag or self.arrive_flag or self.collision_flag:
+        if self.stop_flag or self.arrive_flag:
             return True
         else:
             return False
