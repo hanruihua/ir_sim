@@ -10,7 +10,6 @@ collision_mode = 'stop' #  None: No collision check
 step_time = 0.1
 count = 0
 
-logger = None
 
 
 

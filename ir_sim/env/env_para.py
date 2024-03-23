@@ -12,7 +12,7 @@ class EnvPara:
         
         world_file_path = file_check(world_name)
 
-        self._kwargs_parse = { 'world': None, 'plot': None, 'keyboard': None, 'robot': None, 'robots': None, 'obstacles': None}
+        self._kwargs_parse = { 'world': dict(), 'plot': dict(), 'keyboard': dict(), 'robot': None, 'robots': None, 'obstacle': None, 'obstacles': None}
 
         if world_file_path != None:
            

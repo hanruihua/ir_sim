@@ -14,7 +14,6 @@ from ir_sim.lib.generation import random_generate_polygon
 from ir_sim.world.sensors.sensor_factory import SensorFactory
 from shapely import Point, Polygon, LineString, minimum_bounding_radius
 
-
 @dataclass
 class ObjectInfo:
     id: int
@@ -39,7 +38,7 @@ class ObjectBase:
     id_iter = itertools.count()
     vel_dim = (2, 1)
 
-    def __init__(self, shape: str='circle', shape_tuple=None, state=[0, 0, 0], velocity=[0, 0], goal=[10, 10, 0], kinematics: str='omni', role: str='obstacle', color='k', static=False, vel_min=[-1, -1], vel_max=[1, 1], acce=[inf, inf], angle_range=[-pi, pi], behavior=None, goal_threshold=0.1, sensors=None, kinematics_dict=dict(), arrive_mode='position', description=None, group=0, **kwargs) -> None:
+    def __init__(self, shape: str='circle', shape_tuple=None, state=[0, 0, 0], velocity=[0, 0], goal=[10, 10, 0], kinematics: str='omni', role: str='obstacle', color='k', static=False, vel_min=[-1, -1], vel_max=[1, 1], acce=[inf, inf], angle_range=[-pi, pi], behavior=None, goal_threshold=0.1, sensors=None, kinematics_dict=dict(), arrive_mode='state', description=None, group=0, **kwargs) -> None:
 
         '''
         parameters:
@@ -179,6 +178,7 @@ class ObjectBase:
                 return cls(shape='polygon', shape_tuple=vertices, wheelbase=wheelbase, length=length, width=width, **kwargs)
             
             else:
+
                 length = shape_dict.get('length', 0.2)
                 width = shape_dict.get('width', 0.1)
 
@@ -301,13 +301,7 @@ class ObjectBase:
         
         collision_flags = [ self.check_collision(obj) for obj in env_param.objects if self.id != obj.id]
 
-        new_collision_flag = any(collision_flags)
-
-        if new_collision_flag and not self.collision_flag:
-            env_param.logger.warning("object {} is collided with".format(self.id))
-            
-        self.collision_flag = new_collision_flag
-
+        self.collision_flag = any(collision_flags)
 
         
     def check_collision(self, obj):

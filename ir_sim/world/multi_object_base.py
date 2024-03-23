@@ -16,7 +16,6 @@ class MultiObjects:
         self.behavior_list = extend_list(behavior_list, self.number)
 
         if self.behavior_list is None:
-
             self.object_list = [ ObjectBase.create_with_shape(kinematics, shape, state=state, **kwargs) for state, shape in zip(self.state_list, self.shape_list) ]
 
         else:

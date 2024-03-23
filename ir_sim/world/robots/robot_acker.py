@@ -7,6 +7,9 @@ from matplotlib import image
 import matplotlib.transforms as mtransforms
 from ir_sim.util.util import WrapToRegion, get_transform, get_affine_transform
 import matplotlib as mpl
+from ir_sim.global_param.path_param import path_manager
+
+
 
 class RobotAcker(ObjectBase):
     def __init__(self, shape='rectangle', shape_tuple=None, **kwargs):
@@ -60,7 +63,7 @@ class RobotAcker(ObjectBase):
         r_phi_ang = 180*r_phi/pi
 
         # car_image_path = Path(current_file_frame).parent / 'car0.png'
-        car_image_path = world_param.root_path + '/world/robots/robot_description/car_green.png'
+        car_image_path = path_manager.root_path + '/world/robots/robot_description/car_green.png'
         car_img_read = image.imread(car_image_path)
 
         car_img = ax.imshow(car_img_read, extent=[start_x, start_x+self.length, start_y, start_y+self.width])

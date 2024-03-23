@@ -1,5 +1,7 @@
 import sys
 from dataclasses import dataclass
+import os
+import ir_sim
 
 @dataclass
 class PathManager:

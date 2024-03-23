@@ -8,15 +8,16 @@ import threading
 from ir_sim.global_param import world_param, env_param
 import time
 import sys
-from ir_sim.world.robots.robot_factory import RobotFactory
-from ir_sim.world.obstacles.obstacle_factory import ObstacleFactory
+# from ir_sim.world.robots.robot_factory import RobotFactory
+# from ir_sim.world.obstacles.obstacle_factory import ObstacleFactory
+from ir_sim.world.object_factory import ObjectFactory
 from matplotlib import pyplot as plt
-from ir_sim.world.robots.multi_robots import MultiRobots
-from ir_sim.world.obstacles.multi_obstacles import MultiObstacles
 import platform
 import numpy as np
 from pynput import keyboard
 from .env_logger import EnvLogger
+
+
 
 class EnvBase:
 
@@ -27,13 +28,11 @@ class EnvBase:
             world_name: the name of the world file, default is None
      
     '''
-
-    def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, log_file='ir_sim.log', **kwargs):
+    def __init__(self, world_name=None, display=True, disable_all_plot=False, save_ani=False, full=False, log=True, log_file='ir_sim.log', log_level='INFO', **kwargs):
 
         env_para = EnvPara(world_name)
-        
-        obstacle_factory = ObstacleFactory() 
-
+        object_factory = ObjectFactory() 
+    
         # init env setting
         self.display = display
         self.disable_all_plot = disable_all_plot
@@ -42,15 +41,13 @@ class EnvBase:
         # init objects (world, obstacle, robot)
         self._world = world(world_name, **env_para.parse['world'])
 
-        robot_factory = RobotFactory(env_para.parse['robot'], env_para.parse['robots']) 
-        self._robot_collection = robot_factory.create_from_parse()
-
-
-        self._obstacle_collection = obstacle_factory(**env_para.parse['obstacle'], **env_para.parse['obstacles'])
+        self._robot_collection = object_factory.create_from_parse(env_para.parse['robot'], env_para.parse['robots'])
+        self._obstacle_collection = object_factory.create_from_parse(env_para.parse['obstacle'], env_para.parse['obstacles'])
+        self._object_collection = self._robot_collection + self._obstacle_collection
 
         # env parameters
-        self.logger = EnvLogger(log_file)  
-        self._env_plot = EnvPlot(self.world.grid_map, self.objects, self.world.x_range, self.world.y_range, **env_para.parse['plot'])
+        self.logger = EnvLogger(log_file, log_level)  
+        self._env_plot = EnvPlot(self._world.grid_map, self.objects, self._world.x_range, self._world.y_range, **env_para.parse['plot'])
         env_param.objects = self.objects
         env_param.logger = self.logger
 
@@ -70,13 +67,14 @@ class EnvBase:
                 # figManager = plt.get_current_fig_manager()
                 # figManager.window.showMaximized()
                 # figManager.resize(*figManager.window.maxsize())
-                # self.env_plot.fig.canvas.manager.window.showMaximized()
+                # self._env_plot.fig.canvas.manager.window.showMaximized()
                 mng = plt.get_current_fig_manager()
                 mng.full_screen_toggle()
         
 
     ## magic methods
     def __del__(self):
+        # self.logger.info('Simulated Environment End')
         print('Simulated Environment End')
 
     def __str__(self):
@@ -95,7 +93,7 @@ class EnvBase:
 
         # if action is None:
         #     action = [None] * len(self.objects)
-        self.world.step()
+        self._world.step()
 
     def objects_step(self, action=None):
         action = action + [None] * (len(self.objects) - len(action))
@@ -113,35 +111,35 @@ class EnvBase:
         # default figure arguments
 
         if not self.disable_all_plot: 
-            if self.world.sampling:
+            if self._world.sampling:
 
                 if self.display: plt.pause(interval)
 
-                if self.save_ani: self.env_plot.save_gif_figure(**figure_kwargs)
+                if self.save_ani: self._env_plot.save_gif_figure(**figure_kwargs)
 
-                self.env_plot.clear_components('dynamic', self.objects, **kwargs)
-                self.env_plot.draw_components('dynamic', self.objects, **kwargs)
+                self._env_plot.clear_components('dynamic', self.objects, **kwargs)
+                self._env_plot.draw_components('dynamic', self.objects, **kwargs)
                 
 
     def show(self):
-        self.env_plot.show()
+        self._env_plot.show()
 
     
     def reset_plot(self):
         plt.cla()
-        self.env_plot.init_plot(self.world.grid_map, self.objects)
+        self._env_plot.init_plot(self._world.grid_map, self.objects)
 
 
     # draw
     def draw_trajectory(self, traj, traj_type='g-', **kwargs):
-        self.env_plot.draw_trajectory(traj, traj_type, **kwargs)
+        self._env_plot.draw_trajectory(traj, traj_type, **kwargs)
 
     def draw_points(self, points, s=30, c='b', **kwargs):
-        self.env_plot.draw_points(points, s, c, **kwargs)
+        self._env_plot.draw_points(points, s, c, **kwargs)
 
 
     def draw_box(self, vertex, refresh=True, **kwargs):
-        self.env_plot.draw_box(vertex, refresh, **kwargs)
+        self._env_plot.draw_box(vertex, refresh, **kwargs)
 
 
     ## keyboard control
@@ -171,13 +169,12 @@ class EnvBase:
 
 
     
-    def end(self, ending_time=1, **kwargs):
+    def end(self, ending_time=3, **kwargs):
 
         if self.save_ani:
-            self.env_plot.save_animate(**kwargs)
+            self._env_plot.save_animate(**kwargs)
 
-
-        print(f'Figure will be closed within {ending_time:d} seconds.')
+        self.logger.info(f'Figure will be closed within {ending_time:d} seconds.')
         plt.pause(ending_time)
         plt.close()
         
@@ -243,7 +240,7 @@ class EnvBase:
     
     @property
     def objects(self):
-        return self._robot_collection.robots + self._obstacle_collection.obstacles
+        return self._object_collection
 
     # region: keyboard control
     def on_press(self, key):

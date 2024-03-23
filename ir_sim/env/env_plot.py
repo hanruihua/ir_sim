@@ -11,7 +11,22 @@ import numpy as np
 
 class EnvPlot:
 
-    def __init__(self, grid_map=None, objects=[], x_range=[0, 10], y_range=[0, 10], subplot=False, saved_figure=dict(), saved_ani=dict(), disable_all_plot=False, **kwargs) -> None:
+    def __init__(self, grid_map=None, objects=[], x_range=[0, 10], y_range=[0, 10], subplot=False, saved_figure=dict(), saved_ani=dict(), **kwargs) -> None:
+
+
+        '''
+
+        saved_figure: kwargs for saving the figure, see https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.savefig.html for detail
+        saved_ani: kwargs for saving the animation, see https://imageio.readthedocs.io/en/v2.8.0/format_gif-pil.html#gif-pil for detail
+
+
+        kwargs:
+            color_map: color map for different objects
+            no_axis (default False): whether to show the axis. 
+            tight (default True): whether to show the axis tightly
+        '''
+
+
 
         if not subplot:
             self.fig, self.ax = plt.subplots()
@@ -31,13 +46,11 @@ class EnvPlot:
         self.saved_figure_kwargs = saved_figure
         self.saved_ani_kwargs = saved_ani
 
-        self.disable_all_plot = disable_all_plot
-
         self.dyna_line_list = []
         self.dyna_point_list = []
 
 
-    def init_plot(self, grid_map, objects, no_axis=False):
+    def init_plot(self, grid_map, objects, no_axis=False, tight=True):
         
         self.ax.set_aspect('equal') 
         self.ax.set_xlim(self.x_range) 
@@ -50,6 +63,7 @@ class EnvPlot:
         self.draw_grid_map(grid_map)
 
         if no_axis: plt.axis('off')
+        if tight: self.fig.tight_layout()
 
 
     def draw_components(self, mode='all', objects=[], **kwargs):
@@ -107,8 +121,8 @@ class EnvPlot:
             path_x_list = [p[0] for p in traj.T]
             path_y_list = [p[1] for p in traj.T]
 
-        if not self.disable_all_plot: 
-            line = self.ax.plot(path_x_list, path_y_list, traj_type, label=label, **kwargs)
+        
+        line = self.ax.plot(path_x_list, path_y_list, traj_type, label=label, **kwargs)
 
         if show_direction:
             if isinstance(traj, list):
@@ -120,7 +134,7 @@ class EnvPlot:
 
             self.ax.quiver(path_x_list, path_y_list, u_list, y_list)
 
-        if refresh and not self.disable_all_plot: 
+        if refresh: 
             self.dyna_line_list.append(line)
 
 
@@ -142,7 +156,7 @@ class EnvPlot:
         temp_vertex = np.c_[vertices, vertices[0:2, 0]]         
         box_line = self.ax.plot(temp_vertex[0, :], temp_vertex[1, :], color)
 
-        if refresh and not self.disable_all_plot: 
+        if refresh: 
             self.dyna_line_list.append(box_line)
 
         
