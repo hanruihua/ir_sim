@@ -1,6 +1,6 @@
 from ir_sim.env import EnvBase
 
-env = EnvBase('render.yaml', save_ani=True)
+env = EnvBase('render.yaml', save_ani=False)
 
 for i in range(300):
 
@@ -10,4 +10,4 @@ for i in range(300):
     if env.done():
         break
 
-env.end(10)
+env.end(3)

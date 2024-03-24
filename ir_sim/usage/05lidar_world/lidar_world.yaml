@@ -20,8 +20,8 @@ robot:
       - type: 'lidar2d'
         range_min: 0
         range_max: 5
-        angle_range: 4.7123
-        number: 300
+        angle_range: 3.14 #  4.7123
+        number: 200
         noise: False
         std: 1   
         angle_std: 0.2
@@ -30,8 +30,6 @@ robot:
         alpha: 0.3
 
 
-
-  
 obstacle:
   - shape: {name: 'circle', radius: 1.0}  # radius
     state: [5, 5, 0]  
@@ -39,8 +37,5 @@ obstacle:
   - shape: {name: 'rectangle', length: 1.5, width: 1.2}  # length, width
     state: [6, 5, 1] 
   
-  - shape: {name: 'linestring', vertices: [[], []]}  # vertices
-    state: [6, 5, 1] 
-
-  # - shape: {name: 'circle', radius: 0.4}  # radius
-  #   state: [1, 1, 0] 
+  - shape: {name: 'linestring',vertices: [[10, 5], [4, 0], [6, 7]]}  # vertices
+    state: [0, 0, 0] 

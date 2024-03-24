@@ -2,7 +2,7 @@ from ir_sim.env import EnvBase
 
 env = EnvBase('obstacle_world.yaml')
 
-for i in range(300):
+for i in range(3000):
 
     env.step()
     env.render(0.05)

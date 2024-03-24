@@ -45,6 +45,7 @@ class EnvPlot:
 
         self.saved_figure_kwargs = saved_figure
         self.saved_ani_kwargs = saved_ani
+        
 
         self.dyna_line_list = []
         self.dyna_point_list = []
@@ -68,6 +69,7 @@ class EnvPlot:
 
     def draw_components(self, mode='all', objects=[], **kwargs):
         # mode: static, dynamic, all
+        
         if mode == 'static':
             [obj.plot(self.ax, **kwargs) for obj in objects if obj.static]
                 

@@ -75,7 +75,7 @@ class EnvBase:
     ## magic methods
     def __del__(self):
         # self.logger.info('Simulated Environment End')
-        print('Simulated Environment End')
+        print('Simulated Environment End with sim time elapsed: {} seconds'.format(self._world.time))
 
     def __str__(self):
         return f'Environment: {self._world.name}'

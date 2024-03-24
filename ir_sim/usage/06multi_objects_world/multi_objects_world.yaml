@@ -14,8 +14,7 @@ robots:
     distribution: {mode: 'manual'}
     shapes: 
       - {name: 'circle', radius: 0.2}  # radius
-      - {name: 'circle', radius: 0.2}  # radius
-      # - {name: 'rectangle', length: 0.5, width: 0.2}  # radius
+      - {name: 'rectangle', length: 0.5, width: 0.2} 
     states: 
       - [1, 1, 0]  
       - [2, 1, 0]

@@ -138,6 +138,9 @@ class ObjectBase:
         self.plot_line_list = []
         self.plot_text_list = []
 
+        self.plot_kwargs = kwargs.get('plot', dict())
+
+
     def __repr__(self) -> str:
         pass
 
@@ -412,7 +415,7 @@ class ObjectBase:
         if shape == 'circle':
             geometry = Point([ shape_tuple[0], shape_tuple[1] ]).buffer(shape_tuple[2])
 
-        elif shape == 'polygon' or 'rectangle':
+        elif shape == 'polygon' or shape =='rectangle':
             geometry = Polygon(shape_tuple)
 
         elif shape == 'linestring':
@@ -428,34 +431,42 @@ class ObjectBase:
         pass
     
     
-    def plot(self, ax, show_goal=False, show_text=False, show_arrow=False, show_uncertainty=False, show_trajectory=False, show_trail=False, show_sensor=True, trail_freq=1, **kwargs):
+    def plot(self, ax, **kwargs):
 
-        trail_id = kwargs.get('trail_id', self._id)
+        self.plot_kwargs.update(kwargs)
 
-        # object_color = 'g', goal_color='r', show_goal=True, show_text=False, show_traj=False, traj_type='-g', fontsize=10, 
+        show_goal = self.plot_kwargs.get('show_goal', False) 
+        show_text = self.plot_kwargs.get('show_text', False)
+        show_arrow = self.plot_kwargs.get('show_arrow', False)
+        show_uncertainty = self.plot_kwargs.get('show_uncertainty', False)
+        show_trajectory = self.plot_kwargs.get('show_trajectory', False)
+        show_trail = self.plot_kwargs.get('show_trail', False)
+        show_sensor = self.plot_kwargs.get('show_sensor', True)
+        trail_freq = self.plot_kwargs.get('trail_freq', 2)
+        goal_color = self.plot_kwargs.get('goal_color', self.color)
 
         self.plot_object(ax, **kwargs)
 
         if show_goal:
-            self.plot_goal(ax, **kwargs)
+            self.plot_goal(ax, goal_color)
 
         if show_text:
-            self.plot_text(ax, **kwargs)
+            self.plot_text(ax)
 
         if show_arrow:
-            self.plot_arrow(ax, **kwargs)
+            self.plot_arrow(ax, **self.plot_kwargs)
 
         if show_uncertainty:
-            self.plot_uncertainty(ax, **kwargs)
+            self.plot_uncertainty(ax, **self.plot_kwargs)
 
         if show_trajectory:
-            self.plot_trajectory(ax, **kwargs)
+            self.plot_trajectory(ax, **self.plot_kwargs)
         
-        if show_trail and world_param.count % trail_freq == 0 and trail_id == self._id:
-            self.plot_trail(ax, **kwargs)
+        if show_trail and world_param.count % trail_freq == 0:
+            self.plot_trail(ax, **self.plot_kwargs)
 
         if show_sensor:
-            [sensor.plot(ax, **kwargs) for sensor in self.sensors]
+            [sensor.plot(ax, **self.plot_kwargs) for sensor in self.sensors]
 
         
     def plot_object(self, ax, **kwargs):
@@ -477,13 +488,17 @@ class ObjectBase:
                 object_patch.set_zorder(3)
 
                 ax.add_patch(object_patch)
+                
 
             elif self.shape == 'linestring':
-                # line = mpl.lines.Line2D(self.vertices[0, :], self.vertices[1, :], color=self.color)
-                # line.set_zorder(3)
-
+                object_patch = mpl.lines.Line2D(self.vertices[0, :], self.vertices[1, :], color=self.color)
+                object_patch.set_zorder(3)
+                ax.add_line(object_patch)
+                # line.remove()
+            
             self.plot_patch_list.append(object_patch)
-        
+            # self.plot_patch_list.append(object_patch)
+
         else:
             self.plot_object_image(ax, self.description, **kwargs)
 
@@ -493,18 +508,20 @@ class ObjectBase:
         pass
     
 
-    def plot_trajectory(self, ax, traj_type='g-', keep_length=0, **kwargs):
+    def plot_trajectory(self, ax, keep_length=0, **kwargs):
         
+        traj_color = kwargs.get('traj_color', self.color)
+        traj_style = kwargs.get('traj_style', '-')
+
         # x_list = [t[0, 0] for t in self.trajectory]
         # y_list = [t[1, 0] for t in self.trajectory]
-
         x_list = [t[0, 0] for t in self.trajectory[-keep_length:]]
         y_list = [t[1, 0] for t in self.trajectory[-keep_length:]]
         
-        self.plot_line_list.append(ax.plot(x_list, y_list, traj_type))
+        self.plot_line_list.append(ax.plot(x_list, y_list, color=traj_color, linestyle=traj_style))
         
 
-    def plot_goal(self, ax, goal_color='r', **kwargs):
+    def plot_goal(self, ax, goal_color='r'):
 
         goal_x = self._goal[0, 0]
         goal_y = self._goal[1, 0]
@@ -535,9 +552,9 @@ class ObjectBase:
     def plot_trail(self, ax, **kwargs):
         
         trail_type = kwargs.get('trail_type', self.shape)
-        trail_edgecolor = kwargs.get('edgecolor', 'y')
+        trail_edgecolor = kwargs.get('edgecolor', self.color)
         trail_linewidth = kwargs.get('linewidth', 0.8)
-        trail_alpha = kwargs.get('trail_alpha', 0.8)
+        trail_alpha = kwargs.get('trail_alpha', 0.7)
 
         r_phi_ang = 180 * self._state[2, 0] / pi
         
@@ -620,14 +637,12 @@ class ObjectBase:
         if self.shape == 'circle':
             pass
             
-
         elif self.shape == 'polygon':
             pass
 
         elif self.shape == 'linestring':
             pass
         
-    
         return A, b
 
     def get_vel_range(self):
@@ -636,7 +651,6 @@ class ObjectBase:
         max_vel = np.minimum(self.vel_max, self._velocity + self.info.acce * world_param.step_time)
 
         return min_vel, max_vel
-
 
 
     def set_state(self, state):
@@ -706,6 +720,13 @@ class ObjectBase:
     @property
     def vertices(self):
         # 2*N
+
+        if self.shape == 'linestring':
+            x = self._geometry.xy[0]
+            y = self._geometry.xy[1]
+
+            return np.c_[x, y].T
+
         return self._geometry.exterior.coords._coords.T
 
 

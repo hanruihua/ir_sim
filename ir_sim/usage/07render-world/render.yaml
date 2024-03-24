@@ -17,11 +17,21 @@ robot:
     shape: {name: 'circle', radius: 0.2}  # radius
     # shape: {name: 'rectangle', length: 0.5, width: 0.2}  # radius
     state: [1, 1, 0]  
-    goal: [9, 9, 0] 
+    goal: [9, 4, 0] 
     # acce: [3, .inf]   # acce of [linear, angular]  or [v_x, v_y] or [linear, steer]
     behavior: {name: 'dash'} # move toward to the goal directly 
 
-
+  - kinematics: {name: 'diff'}  # omni, diff, acker
+    shape: {name: 'circle', radius: 0.2}  # radius
+    # shape: {name: 'rectangle', length: 0.5, width: 0.2}  # radius
+    state: [5, 1, 0]  
+    goal: [2, 6, 0] 
+    # acce: [3, .inf]   # acce of [linear, angular]  or [v_x, v_y] or [linear, steer]
+    behavior: {name: 'dash'} # move toward to the goal directly 
+    color: 'blue'
+    plot: {show_trajectory: True, show_trail: True} 
+      
+      
 obstacles:
   - number: 10
     distribution: {mode: 'manual'}

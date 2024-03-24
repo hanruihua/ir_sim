@@ -44,7 +44,7 @@ class world:
 
 
         # set world param
-        world_param.time_step = step_time
+        world_param.step_time = step_time
         world_param.control_mode = control_mode
         world_param.collision_mode = collision_mode
 
