@@ -4,30 +4,52 @@ from ir_sim.world.robots.robot_acker import RobotAcker
 from ir_sim.world import ObjectBase
 from ir_sim.world.obstacles.obstacle_diff import ObstacleDiff
 from ir_sim.world.obstacles.obstacle_static import ObstacleStatic
+from ir_sim.util.util import extend_list
+
 
 class ObjectFactory:
     
-    def create_from_parse(self, single_parse, multiple_parse, obj_type='robot'):
+    def create_from_parse(self, parse, obj_type='robot'):
         
         object_list1 = list()
 
-        if isinstance(single_parse, list):
-            object_list1 = [self.create_object(obj_type, **sp) for sp in single_parse]
+        
+        if isinstance(parse, list):
+            object_list1 = [self.create_object(obj_type, **sp) for sp in parse]
             
-        elif isinstance(single_parse, dict):
-            object_list1 = [self.create_object(obj_type, **single_parse)]
+        elif isinstance(parse, dict):
+            object_list1 = [self.create_object(obj_type, **parse)]
+
 
 
         return object_list1
 
+
+    
     def create_object(self, obj_type='robot', **kwargs):
         
-        if obj_type == 'robot':
-            return self.create_robot(**kwargs)
-        elif obj_type == 'obstacle':
-            return self.create_obstacle(**kwargs)
+        number = int(kwargs.get('number', 1))
+        distribution =  kwargs.get('distribution', 'manual')
+
+        if number == 0:
+            return None
+
+        if number == 1:
+            if obj_type == 'robot':
+                return [self.create_robot(**kwargs)]
+            elif obj_type == 'obstacle':
+                return [self.create_obstacle(**kwargs)]
+        
+        else:
+            if distribution == 'manual':
+                pass
+            elif distribution == 'random':
+                pass
+            else:
+                raise NotImplementedError(f"Distribution {distribution} not implemented, please use 'manual', 'random'")
 
 
+        
     def create_robot(self, kinematics=dict(), shape=dict(), **kwargs):
 
         # kinematics_name = kinematics.pop('name', 'omni')

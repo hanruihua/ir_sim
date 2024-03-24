@@ -555,6 +555,7 @@ class ObjectBase:
         trail_edgecolor = kwargs.get('edgecolor', self.color)
         trail_linewidth = kwargs.get('linewidth', 0.8)
         trail_alpha = kwargs.get('trail_alpha', 0.7)
+        trail_fill = kwargs.get('trail_fill', False)
 
         r_phi_ang = 180 * self._state[2, 0] / pi
         
@@ -569,7 +570,7 @@ class ObjectBase:
 
         elif trail_type == 'circle':
             
-            car_circle = mpl.patches.Circle(xy=self.centroid, radius = self.radius, edgecolor=trail_edgecolor, fill=False)
+            car_circle = mpl.patches.Circle(xy=self.centroid, radius = self.radius, edgecolor=trail_edgecolor, fill=trail_fill, alpha=trail_alpha)
             ax.add_patch(car_circle)
 
              

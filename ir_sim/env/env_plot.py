@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
 import logging
 from ir_sim.global_param.path_param import path_manager as pm
-from ir_sim.global_param import world_param
+from ir_sim.global_param import world_param, env_param
 import os
 import imageio
 import shutil
 import glob
 from math import sin, cos
 import numpy as np
+
 
 class EnvPlot:
 
@@ -193,8 +194,8 @@ class EnvPlot:
         # keep_len = self.saved_ani_kwargs.get('keep_len', 30)
         # rm_fig_path = self.saved_ani_kwargs.get('rm_fig_path', True)
 
-        print('Start to create animation')
-
+        env_param.logger.info('Start to create animation')
+        
         ap = pm.ani_path
         fp = pm.ani_buffer_path
 
@@ -214,7 +215,8 @@ class EnvPlot:
                     image_list.append(imageio.imread(str(file_name)))
 
         imageio.mimsave(ap +'/'+ ani_name + suffix, image_list, **self.saved_ani_kwargs)
-        print('Create animation successfully, the animation file is saved in the path ' + ap)
+
+        env_param.logger.info('Create animation successfully, the animation file is saved in the path ' + ap)
  
         if rm_fig_path: shutil.rmtree(fp)
 

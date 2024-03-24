@@ -8,37 +8,29 @@ world:
   control_mode: 'auto'  # 'keyboard', 'auto'
 
 
-robots:
-  - kinematics: {name: 'diff'}
-    number: 2
+robot:
+  - number: 2
     distribution: {mode: 'manual'}
-    shapes: 
+    kinematics: {name: 'diff'}
+    shape: 
       - {name: 'circle', radius: 0.2}  # radius
       - {name: 'rectangle', length: 0.5, width: 0.2} 
-    states: 
+    state: 
       - [1, 1, 0]  
       - [2, 1, 0]
-    goals:
+    goal:
       - [9, 9, 0] 
       - [9, 2, 0]
-    behaviors: 
+    behavior: 
       - {name: 'dash'} # move toward to the goal directly 
 
 
-obstacles:
+obstacle:
   - number: 10
     distribution: {mode: 'manual'}
-    shapes:
+    shape:
       - {name: 'circle', radius: 1.5}  # radius
       - {name: 'circle', radius: 1.0}  # radius
 
-    states: [[20, 34], [31, 38], [10, 20], [41, 25], [20, 13], [16, 26], [10, 24], [18, 20], [16, 26], [19, 26], [10, 30]]
+    state: [[20, 34], [31, 38], [10, 20], [41, 25], [20, 13], [16, 26], [10, 24], [18, 20], [16, 26], [19, 26], [10, 30]]
     
-
-
-
-
-
-
-  # - shape: {name: 'circle', radius: 0.4}  # radius
-  #   state: [1, 1, 0] 
