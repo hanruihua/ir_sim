@@ -9,30 +9,28 @@ from ir_sim.util.util import extend_list
 
 class ObjectFactory:
     
-    def create_from_parse(self, parse, obj_type='robot'):
-        
-        object_list1 = list()
-
-        
-        if isinstance(parse, list):
-            object_list1 = [self.create_object(obj_type, **sp) for sp in parse]
-            
-        elif isinstance(parse, dict):
-            object_list1 = [self.create_object(obj_type, **parse)]
-
-
-
-        return object_list1
-
-
     
+    def create_from_parse(self, parse, obj_type='robot'):
+        # create object from yaml file parse
+
+        object_list = list()
+
+        if isinstance(parse, list):
+            object_list = [obj for sp in parse for obj in self.create_object(obj_type, **sp)]
+
+        elif isinstance(parse, dict):
+            object_list = [obj for obj in self.create_object(obj_type, **parse)]
+
+        return object_list
+
+
     def create_object(self, obj_type='robot', **kwargs):
         
         number = int(kwargs.get('number', 1))
-        distribution =  kwargs.get('distribution', 'manual')
+        distribution = kwargs.get('distribution', 'manual')
 
         if number == 0:
-            return None
+            return list()
 
         if number == 1:
             if obj_type == 'robot':
@@ -43,8 +41,10 @@ class ObjectFactory:
         else:
             if distribution == 'manual':
                 pass
+                
             elif distribution == 'random':
                 pass
+
             else:
                 raise NotImplementedError(f"Distribution {distribution} not implemented, please use 'manual', 'random'")
 
@@ -80,8 +80,7 @@ class ObjectFactory:
             return ObstacleStatic.create_with_shape(kinematics_name, shape, kinematics_dict=kinematics, **kwargs)
 
 
-    @staticmethod
-    def convert_multiple_parse():
+    def generate_state_list(self, number, distribution='random', **kwargs):
         pass
 
             
