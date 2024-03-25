@@ -26,7 +26,8 @@ dependencies = ['matplotlib',
                 'imageio',
                 'pathlib',
                 'shapely',
-                'scikit-image',]
+                'scikit-image',
+                'loguru',]
 
 
 [tool.setuptools.packages.find]
