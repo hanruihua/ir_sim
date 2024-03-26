@@ -30,7 +30,7 @@ robot:
 
 obstacle:
   - number: 10
-    distribution: {mode: 'manual'}
+    distribution: {name: 'manual'}
     shape:
       - {name: 'polygon', random_shape: true, center_range: [5, 10, 40, 30], avg_radius_range: [0.5, 2]}  # radius
 

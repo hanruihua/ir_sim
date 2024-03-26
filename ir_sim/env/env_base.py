@@ -36,6 +36,8 @@ class EnvBase:
         self.display = display
         self.disable_all_plot = disable_all_plot
         self.save_ani = save_ani
+        self.logger = EnvLogger(log_file, log_level) 
+        env_param.logger = self.logger 
 
         # init objects (world, obstacle, robot)
         self._world = world(world_name, **env_para.parse['world'])
@@ -45,10 +47,10 @@ class EnvBase:
         self._object_collection = self._robot_collection + self._obstacle_collection
 
         # env parameters
-        self.logger = EnvLogger(log_file, log_level)  
+        
         self._env_plot = EnvPlot(self._world.grid_map, self.objects, self._world.x_range, self._world.y_range, **env_para.parse['plot'])
         env_param.objects = self.objects
-        env_param.logger = self.logger
+        
 
         if world_param.control_mode == 'keyboard':
             self.init_keyboard(env_para.parse['keyboard'])

@@ -22,5 +22,5 @@ obstacle:
   - shape: {name: 'rectangle', length: 1.5, width: 1.2}  # radius
     state: [6, 5, 1] 
 
-  - shape: {name: 'linestring', vertices: [[5, 5], [4, 0], [1, 1]] }  # vertices
+  - shape: {name: 'linestring', vertices: [[5, 5], [4, 0], [1, 6]] }  # vertices
     state: [0, 0, 0] 

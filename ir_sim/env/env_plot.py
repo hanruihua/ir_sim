@@ -216,7 +216,7 @@ class EnvPlot:
 
         imageio.mimsave(ap +'/'+ ani_name + suffix, image_list, **self.saved_ani_kwargs)
 
-        env_param.logger.info('Create animation successfully, the animation file is saved in the path ' + ap)
+        env_param.logger.info('Create animation successfully, saved in the path ' + ap)
  
         if rm_fig_path: shutil.rmtree(fp)
 

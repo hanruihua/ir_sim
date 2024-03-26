@@ -48,17 +48,30 @@ def WrapToRegion(rad, range):
 
 def extend_list(input_list, number):
 
+    if not isinstance(input_list, list):
+        return [input_list] * number
+
     if number == 0:
         return []
 
     if len(input_list) == 0:
         return None
 
+    if len(input_list) <= number: 
+        input_list.extend([input_list[-1]] * (number - len(input_list)) )
 
-    if len(input_list) < number: 
-        input_list.extend([input_list[-1]]* (number - len(input_list)) )
+    if len(input_list) > number:
+        input_list = input_list[:number]
 
     return input_list
+
+
+def is_list_of_lists(lst):
+    return isinstance(lst, list) and any(isinstance(sub, list) for sub in lst)
+
+def is_list_not_list_of_lists(lst):
+    return isinstance(lst, list) and all(not isinstance(sub, list) for sub in lst)
+
 
 def relative_position(position1, position2, topi=True):
 
