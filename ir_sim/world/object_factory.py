@@ -42,7 +42,7 @@ class ObjectFactory:
         for i in range(number):
             obj_dict = dict()
             
-            obj_dict = {k: convert_list_length(v, number)[i] for k, v in kwargs.items() if k is not 'sensors'}
+            obj_dict = {k: convert_list_length(v, number)[i] for k, v in kwargs.items() if k != 'sensors'}
             obj_dict['state'] = state_list[i]
             obj_dict['goal'] = goal_list[i]
             obj_dict['sensors'] = convert_list_length_dict(kwargs.get('sensors', None), number)[i]

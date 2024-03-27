@@ -10,6 +10,11 @@ class ObstacleDiff(RobotDiff):
 
 
 
+    def plot(self, ax, **kwargs):
+        super().plot(ax, **kwargs)
+
+
+
 
 
 

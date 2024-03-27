@@ -2,7 +2,8 @@ from ir_sim.world import ObjectBase
 import numpy as np
 from math import cos, sin, pi
 from ir_sim.util.util import WrapToPi
-from ir_sim.global_param import world_param 
+from ir_sim.global_param import world_param
+from ir_sim.global_param.path_param import path_manager
 from matplotlib import image
 import matplotlib.transforms as mtransforms
 
@@ -46,7 +47,11 @@ class RobotDiff(ObjectBase):
         return next_state
 
 
-    def plot(self, ax, show_goal=True, show_arrow=True, **kwargs):
+    def plot(self, ax, **kwargs):
+
+        show_goal = self.plot_kwargs.get('show_goal', True)
+        show_arrow = self.plot_kwargs.get('show_arrow', True)
+
         super().plot(ax, show_goal=show_goal, show_arrow = show_arrow, **kwargs)
 
 
@@ -62,7 +67,7 @@ class RobotDiff(ObjectBase):
         r_phi_ang = 180*r_phi/pi
 
         # car_image_path = Path(current_file_frame).parent / 'car0.png'
-        robot_image_path = world_param.root_path + '/world/description/' + description
+        robot_image_path = path_manager.root_path + '/world/description/' + description
         robot_img_read = image.imread(robot_image_path)
 
         robot_img = ax.imshow(robot_img_read, extent=[start_x, start_x+self.length, start_y, start_y+self.width])

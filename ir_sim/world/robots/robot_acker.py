@@ -48,8 +48,11 @@ class RobotAcker(ObjectBase):
         return new_state
 
 
-    def plot(self, ax, show_goal=True, show_arrow=True, **kwargs):
-        super().plot(ax, show_goal=show_goal, show_arrow = show_arrow, **kwargs)
+    def plot(self, ax, **kwargs):
+
+        show_goal = self.plot_kwargs.get('show_goal', True)
+
+        super().plot(ax, show_goal=show_goal, **kwargs)
 
 
     def plot_object(self, ax, **kwargs):
