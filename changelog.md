@@ -1,7 +1,7 @@
 
 ## ir_sim 2.1.0
 
-Big update Version
+Big Version
 
 - Reformulate the whole project framework, all the objects are developed by the object base
 - Using shapely to construct the geometry for the robot and obstacles
@@ -9,8 +9,6 @@ Big update Version
 - Add the behavior library for the objects
 - Add the object factory to create the objects
 - Add env logger to record and print the environment status
-
-
 
 
 ## ir_sim 1.1.11
