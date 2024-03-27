@@ -1,11 +1,14 @@
 
-## ir_sim 1.2.0
+## ir_sim 2.1.0
 
-Big Version
+Big update Version
 
-- Reformulate the whole project framework
-
-
+- Reformulate the whole project framework, all the objects are developed by the object base
+- Using shapely to construct the geometry for the robot and obstacles
+- Reconstruct the YAML interface
+- Add the behavior library for the objects
+- Add the object factory to create the objects
+- Add env logger to record and print the environment status
 
 
 
