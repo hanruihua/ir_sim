@@ -26,6 +26,19 @@ robot:
     color: 
       - 'royalblue'
       - 'red'
+  
+  - number: 4
+    distribution: {name: 'random'}
+    kinematics: {name: 'diff'}
+    shape: 
+      - {name: 'circle', radius: 0.2}  # radius
+    behavior: 
+      - {name: 'dash'} # move toward to the goal directly 
+    color: 
+      - 'yellow'
+
+    plot:
+      goal_color: 'purple'
 
 
 obstacle:

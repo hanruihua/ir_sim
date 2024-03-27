@@ -34,5 +34,7 @@ obstacle:
     shape:
       - {name: 'polygon', random_shape: true, center_range: [5, 10, 40, 30], avg_radius_range: [0.5, 2]}  # radius
 
-  # - shape: {name: 'circle', radius: 0.4}  # radius
-  #   state: [1, 1, 0] 
+  - number: 10
+    distribution: {name: 'random', range_low: [10, 10, -3.14], range_high: [40, 40, 3.14]}
+    shape:
+      - {name: 'circle', radius: 0.4}  # radius

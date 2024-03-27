@@ -306,12 +306,11 @@ class ObjectBase:
         new_collision_flag = any(collision_flags)
 
         if new_collision_flag and not self.collision_flag:
-            env_param.logger.warning( self.role + "{} is collided".format(self.id))
+            env_param.logger.warning( self.role + "{} is collided at state {}".format(self.id, list(np.round(self._state[:2, 0], 2))))
             
         self.collision_flag = new_collision_flag
 
 
-        
     def check_collision(self, obj):
         return shapely.intersects(self._geometry, obj._geometry)
 

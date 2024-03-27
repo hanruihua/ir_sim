@@ -66,6 +66,55 @@ def extend_list(input_list, number):
     return input_list
 
 
+def convert_list_length(input_data, number=0):
+
+    '''
+    convert the input to a list with a specific length of number
+    '''
+
+    if number == 0:
+        return []
+
+    if not isinstance(input_data, list) or is_list_of_numbers(input_data):
+        return [input_data] * number
+    
+    if len(input_data) <= number: 
+        input_data.extend([input_data[-1]] * (number - len(input_data)) )
+
+    if len(input_data) > number:
+        input_data = input_data[:number]
+
+    return input_data
+
+def convert_list_length_dict(input_data, number=0):
+
+    '''
+    convert the input to a list with a specific length of number
+    '''
+
+    if number == 0:
+        return []
+
+    if not isinstance(input_data, list) or is_list_of_dicts(input_data):
+        return [input_data] * number
+    
+    if len(input_data) <= number: 
+        input_data.extend([input_data[-1]] * (number - len(input_data)) )
+
+    if len(input_data) > number:
+        input_data = input_data[:number]
+
+    return input_data
+
+    
+def is_list_of_dicts(lst):
+    return isinstance(lst, list) and all(isinstance(sub, dict) for sub in lst)
+
+
+def is_list_of_numbers(lst):
+    return isinstance(lst, list) and all(isinstance(sub, (int, float)) for sub in lst)
+
+
 def is_list_of_lists(lst):
     return isinstance(lst, list) and any(isinstance(sub, list) for sub in lst)
 

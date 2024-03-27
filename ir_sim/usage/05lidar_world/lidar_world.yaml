@@ -16,7 +16,7 @@ robot:
     # acce: [3, .inf]   # acce of [linear, angular]  or [v_x, v_y] or [linear, steer]
     behavior: {name: 'dash'} # move toward to the goal directly 
 
-    sensors: 
+    sensors:
       - type: 'lidar2d'
         range_min: 0
         range_max: 5
@@ -28,8 +28,7 @@ robot:
         offset: [0, 0, 0]
         reso: 0.1
         alpha: 0.3
-      
-
+        
 
 obstacle:
   - shape: {name: 'circle', radius: 1.0}  # radius

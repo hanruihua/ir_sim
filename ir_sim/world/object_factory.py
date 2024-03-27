@@ -4,7 +4,7 @@ from ir_sim.world.robots.robot_acker import RobotAcker
 from ir_sim.world import ObjectBase
 from ir_sim.world.obstacles.obstacle_diff import ObstacleDiff
 from ir_sim.world.obstacles.obstacle_static import ObstacleStatic
-from ir_sim.util.util import extend_list, is_list_of_lists, is_list_not_list_of_lists
+from ir_sim.util.util import convert_list_length, convert_list_length_dict, is_list_of_numbers
 from ir_sim.global_param import env_param 
 import random
 
@@ -42,12 +42,10 @@ class ObjectFactory:
         for i in range(number):
             obj_dict = dict()
             
-            obj_dict = {k: extend_list(v, number)[i] for k, v in kwargs.items() if k is not 'sensors'}
+            obj_dict = {k: convert_list_length(v, number)[i] for k, v in kwargs.items() if k is not 'sensors'}
             obj_dict['state'] = state_list[i]
             obj_dict['goal'] = goal_list[i]
-            
-            if 'sensors' in kwargs:
-                obj_dict['sensors'] = kwargs['sensors'] if is_list_not_list_of_lists(kwargs['sensors']) else extend_list(kwargs['sensors'], number)[i]
+            obj_dict['sensors'] = convert_list_length_dict(kwargs.get('sensors', None), number)[i]
 
             if obj_type == 'robot':
                 object_list.append(self.create_robot(**obj_dict))
@@ -57,8 +55,6 @@ class ObjectFactory:
         return object_list
     
     
-            
-
     def create_robot(self, kinematics=dict(), shape=dict(), **kwargs):
 
         # kinematics_name = kinematics.pop('name', 'omni')
@@ -99,51 +95,31 @@ class ObjectFactory:
             - state: initial state for objects
         '''
         
-        if number == 1:
-            return [state], [goal]
-
         if distribution['name'] == 'manual':
+            state_list = convert_list_length(state, number)
+            goal_list = convert_list_length(goal, number)
 
-            if is_list_not_list_of_lists(state):
-                env_param.logger.warning("No state list provided for manual distribution, default start state {} sequence will be used.".format(state))
 
-                if obj_type=='robot': 
-                    state_list = [ [state[0] + i, state[1], state[2]] for i in range(number)]
-                    goal_list = [ [goal[0] + i, goal[1], goal[2]] for i in range(number)]
-
-                if obj_type=='obstacle': 
-                    state_list = [state] * number
-                    goal_list = [goal] * number
-
-                return state_list, goal_list
+        elif distribution['name'] == 'random':
             
+            range_low = distribution.get('range_low', [0, 0, -np.pi])
+            range_high = distribution.get('range_high', [10, 10, np.pi])
 
-            if is_list_of_lists(state):
+            state_array = np.random.uniform(low=range_low, high=range_high, size=(number, 3))
+            state_list = state_array.tolist()
 
-                if is_list_not_list_of_lists(goal): 
-                    goal = extend_list(goal, number)
-                else:
-                    goal = goal[:number]
+            goal_array = np.random.uniform(low=range_low, high=range_high, size=(number, 3))
+            goal_list = goal_array.tolist()
 
-
-                if len(state) < number:
-                    if obj_type=='robot': 
-                        env_param.logger.error("Robot state list provided is less than number of robots")
-                        assert False
-
-                    elif obj_type=='obstacle':
-                        env_param.logger.warning("Obstacle state list provided is less than number of obstacles, state list will be repeated")
-
-                        if is_list_not_list_of_lists(goal): goal = [goal]
-
-                        return extend_list(state, number), goal
-    
-                else:
-                    return state[:number], goal
-
-
-        if distribution['name'] == 'random':
+        
+        elif distribution['name'] == 'uniform':
             pass
+        
+        elif distribution['name'] == 'circle':
+            pass
+
+
+        return state_list, goal_list
             
         #     x_range = distribution.get('x_range', (0, 10))
         #     y_range = distribution.get('y_range', (0, 10))
