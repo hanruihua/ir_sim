@@ -27,7 +27,11 @@ class ObjectFactory:
 
 
     def create_from_map(self, points, reso=0.1):
-        return [ObstacleMap(shape='points', shape_tuple=points, color='k', reso=reso)]
+
+        if points is None:
+            return []
+        else:
+            return [ObstacleMap(shape='points', shape_tuple=points, color='k', reso=reso)]
 
         
 
@@ -122,8 +126,20 @@ class ObjectFactory:
             pass
         
         elif distribution['name'] == 'circle':
-            pass
+            
+            radius = distribution.get('radius', 4)
+            center = distribution.get('center', [5, 5, 0])
 
+            state_list, goal_list = [], []
+            for i in range(number):
+                theta = 2*np.pi*i/number
+                x = center[0] + radius*np.cos(theta)
+                y = center[1] + radius*np.sin(theta)
+                state_list.append([x, y, theta-np.pi])
+
+                goal_x = center[0] - radius*np.cos(theta)
+                goal_y = center[1] - radius*np.sin(theta)
+                goal_list.append([goal_x, goal_y, 0])
 
         return state_list, goal_list
             

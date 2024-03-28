@@ -81,7 +81,7 @@ class EnvPlot:
             [obj.plot(self.ax, **kwargs) for obj in objects]
         else:
             logging.error('error input of the draw mode')
-
+    
     def clear_components(self, mode='all', objects=[], **kwargs):
 
         if mode == 'dynamic':

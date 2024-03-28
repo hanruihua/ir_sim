@@ -16,6 +16,7 @@ import platform
 import numpy as np
 from pynput import keyboard
 from .env_logger import EnvLogger
+import copy
 
 
 class EnvBase:
@@ -51,10 +52,8 @@ class EnvBase:
         self._env_plot = EnvPlot(self._world.grid_map, self.objects, self._world.x_range, self._world.y_range, **env_para.parse['plot'])
         env_param.objects = self.objects
         
-
         if world_param.control_mode == 'keyboard':
             self.init_keyboard(env_para.parse['keyboard'])
-
 
         if full:
             mode = platform.system()
@@ -76,7 +75,7 @@ class EnvBase:
     ## magic methods
     def __del__(self):
         # self.logger.info('Simulated Environment End')
-        print('Simulated Environment End with sim time elapsed: {} seconds'.format(self._world.time))
+        print('Simulated Environment End with sim time elapsed: {} seconds'.format(round(self._world.time, 2)))
 
     def __str__(self):
         return f'Environment: {self._world.name}'
@@ -120,6 +119,24 @@ class EnvBase:
 
                 self._env_plot.clear_components('dynamic', self.objects, **kwargs)
                 self._env_plot.draw_components('dynamic', self.objects, **kwargs)
+    
+
+    def render_offline(self, interval=0.05, record=[], figure_kwargs=dict(), **kwargs):
+
+        # figure_args: arguments when saving the figures for animation, see https://matplotlib.org/3.1.1/api/_as_gen/matplotlib.pyplot.savefig.html for detail
+        # default figure arguments
+
+        for objs in record:
+
+            if not self.disable_all_plot: 
+                if self._world.sampling:
+
+                    if self.display: plt.pause(interval)
+
+                    if self.save_ani: self._env_plot.save_gif_figure(**figure_kwargs)
+
+                    self._env_plot.clear_components('dynamic', objs, **kwargs)
+                    self._env_plot.draw_components('dynamic', objs, **kwargs)
                 
 
     def show(self):
@@ -201,7 +218,6 @@ class EnvBase:
 
     def get_robot_info(self, id=0):
         return self.robot_list[id].get_info()
-
 
    
     @property

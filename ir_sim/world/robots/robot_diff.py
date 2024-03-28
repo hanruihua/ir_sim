@@ -1,7 +1,7 @@
 from ir_sim.world import ObjectBase
 import numpy as np
 from math import cos, sin, pi
-from ir_sim.util.util import WrapToPi
+from ir_sim.util.util import WrapToPi, diff_to_omni
 from ir_sim.global_param import world_param
 from ir_sim.global_param.path_param import path_manager
 from matplotlib import image
@@ -75,6 +75,13 @@ class RobotDiff(ObjectBase):
         robot_img.set_transform(trans_data)
 
         self.plot_patch_list.append(robot_img)
+
+    
+    @property
+    def velocity_xy(self):
+        return diff_to_omni(self.state[2, 0], self._velocity)
+
+
 
     
 

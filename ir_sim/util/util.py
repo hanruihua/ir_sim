@@ -167,6 +167,48 @@ def geometry_transform(geometry, state):
     return new_geometry
 
 
+def omni_to_diff(state_ori, vel_omni, w_max=1.5, guarantee_time = 0.2, tolerance = 0.1, mini_speed=0.02):
+
+    if isinstance(vel_omni, list):
+        vel_omni = np.array(vel_omni).reshape((2, 1))
+
+    speed = np.sqrt(vel_omni[0, 0] ** 2 + vel_omni[1, 0] ** 2)
+    
+    if speed <= mini_speed:
+        return np.zeros((2, 1))
+
+    vel_radians = atan2(vel_omni[1, 0], vel_omni[0, 0])
+    robot_radians = state_ori
+    diff_radians = robot_radians - vel_radians
+    # w_max = self.vel_max[1, 0]
+
+    diff_radians = WrapToPi(diff_radians)
+
+    if abs(diff_radians) < tolerance: w = 0
+    else:
+        w = -diff_radians / guarantee_time
+        if w > w_max: w = w_max
+        if w < -w_max: w = -w_max
+
+    v = speed * cos(diff_radians)
+    if v<0: v = 0
+
+    return np.array([[v], [w]])
+
+
+def diff_to_omni(state_ori, vel_diff):
+
+    if len(vel_diff.shape)==0:
+        return np.zeros((2, 1))
+
+    vel_linear = vel_diff[0, 0]
+    theta = state_ori
+    vx = vel_linear * cos(theta)
+    vy = vel_linear * sin(theta)
+
+    return np.array([[vx], [vy]])
+
+
 # def extend_list(lst, target_length):
 
 #     if len(lst) == 0:

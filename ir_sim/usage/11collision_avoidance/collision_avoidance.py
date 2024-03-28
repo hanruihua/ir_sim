@@ -1,6 +1,6 @@
 from ir_sim.env import EnvBase
 
-env = EnvBase('grid_map.yaml', save_ani=False, rm_fig_path=False, full=False)
+env = EnvBase('collision_avoidance.yaml', save_ani=True, full=False)
 
 for i in range(1000):
 
@@ -9,5 +9,6 @@ for i in range(1000):
     
     if env.done():
         break
+
 
 env.end(5)

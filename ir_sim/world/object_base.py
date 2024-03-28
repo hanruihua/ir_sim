@@ -9,10 +9,11 @@ from shapely.ops import transform
 from ir_sim.lib.behavior import Behavior
 from math import inf, pi, atan2, cos, sin, sqrt
 from ir_sim.global_param import world_param, env_param
-from ir_sim.util.util import WrapToRegion, get_transform
+from ir_sim.util.util import WrapToRegion, get_transform, relative_position, WrapToPi
 from ir_sim.lib.generation import random_generate_polygon
 from ir_sim.world.sensors.sensor_factory import SensorFactory
 from shapely import Point, Polygon, LineString, minimum_bounding_radius, MultiPoint
+
 
 @dataclass
 class ObjectInfo:
@@ -216,6 +217,7 @@ class ObjectBase:
 
     def step(self, velocity=None, **kwargs):
 
+
         if self.static or self.stop_flag:
 
             self._velocity = np.zeros_like(velocity)
@@ -342,7 +344,12 @@ class ObjectBase:
                         self._goal = np.random.uniform(range_low, range_high)
                         self.arrive_flag = False
 
-                behavior_vel = self.obj_behavior.gen_vel(self._state, self._goal, min_vel, max_vel)
+                if self.obj_behavior.behavior_dict['name'] == 'rvo':
+                    behavior_vel = self.obj_behavior.gen_vel(self._state, self._goal, min_vel, max_vel, rvo_neighbor = self.rvo_neighbors, rvo_state=self.rvo_state)
+                
+                else:
+                    behavior_vel = self.obj_behavior.gen_vel(self._state, self._goal, min_vel, max_vel)
+
             
         else:
             if isinstance(velocity, list): velocity = np.c_[velocity]
@@ -439,6 +446,9 @@ class ObjectBase:
     
     
     def plot(self, ax, **kwargs):
+        
+        self.state_re = self._state
+        self.goal_re = self._goal
 
         self.plot_kwargs.update(kwargs)
 
@@ -480,8 +490,8 @@ class ObjectBase:
 
         if self.description is None:
 
-            x = self.state[0, 0]
-            y = self.state[1, 0]
+            x = self.state_re[0, 0]
+            y = self.state_re[1, 0]
 
             if self.shape == 'circle':
 
@@ -533,8 +543,8 @@ class ObjectBase:
 
     def plot_goal(self, ax, goal_color='r'):
 
-        goal_x = self._goal[0, 0]
-        goal_y = self._goal[1, 0]
+        goal_x = self.goal_re[0, 0]
+        goal_y = self.goal_re[1, 0]
         
         goal_circle = mpl.patches.Circle(xy=(goal_x, goal_y), radius=self.radius, color=goal_color, alpha=0.5)
         goal_circle.set_zorder(1)
@@ -549,11 +559,12 @@ class ObjectBase:
 
     def plot_arrow(self, ax, arrow_length=0.4, arrow_width=0.6, **kwargs):
 
-        x = self._state[0][0]
-        y = self._state[1][0]
-        theta = self._state[2][0]
+        x = self.state_re[0][0]
+        y = self.state_re[1][0]
+        theta = self.state_re[2][0]
+        arrow_color = kwargs.get('arrow_color', self.color)
 
-        arrow = mpl.patches.Arrow(x, y, arrow_length*cos(theta), arrow_length*sin(theta), width=arrow_width)
+        arrow = mpl.patches.Arrow(x, y, arrow_length*cos(theta), arrow_length*sin(theta), width=arrow_width, color=arrow_color)
         arrow.set_zorder(3)
         ax.add_patch(arrow)
         
@@ -566,6 +577,7 @@ class ObjectBase:
         trail_linewidth = kwargs.get('linewidth', 0.8)
         trail_alpha = kwargs.get('trail_alpha', 0.7)
         trail_fill = kwargs.get('trail_fill', False)
+        trail_color = kwargs.get('trail_color', self.color)
 
         r_phi_ang = 180 * self._state[2, 0] / pi
         
@@ -575,28 +587,13 @@ class ObjectBase:
             start_x = self.vertices[0, 0]
             start_y = self.vertices[1, 0]
 
-            car_rect = mpl.patches.Rectangle(xy=(start_x, start_y), width=self.length, height=self.width, angle=r_phi_ang, edgecolor=trail_edgecolor, fill=False, alpha=trail_alpha, linewidth=trail_linewidth)
+            car_rect = mpl.patches.Rectangle(xy=(start_x, start_y), width=self.length, height=self.width, angle=r_phi_ang, edgecolor=trail_edgecolor, fill=False, alpha=trail_alpha, linewidth=trail_linewidth, facecolor=trail_color)
             ax.add_patch(car_rect)
 
         elif trail_type == 'circle':
             
-            car_circle = mpl.patches.Circle(xy=self.centroid, radius = self.radius, edgecolor=trail_edgecolor, fill=trail_fill, alpha=trail_alpha)
+            car_circle = mpl.patches.Circle(xy=self.centroid, radius = self.radius, edgecolor=trail_edgecolor, fill=trail_fill, alpha=trail_alpha, facecolor=trail_color)
             ax.add_patch(car_circle)
-
-             
-
-    
-    # if show_trail:
-    #         if trail_type == 'rectangle':
-    #             car_rect = mpl.patches.Rectangle(xy=(start_x, start_y), width=self.shape[0], height=self.shape[1], angle=r_phi_ang, edgecolor=self.edgecolor, fill=False, alpha=0.8, linewidth=0.8)
-    #             ax.add_patch(car_rect)
-
-    #         elif trail_type == 'circle':
-    #             x = (min(self.vertex[0, :]) + max(self.vertex[0, :])) / 2
-    #             y = (min(self.vertex[1, :]) + max(self.vertex[1, :])) / 2
-
-    #             car_circle = mpl.patches.Circle(xy=(x, y), radius = self.shape[0] / 2, edgecolor='red', fill=False)
-    #             ax.add_patch(car_circle)
 
 
     def plot_uncertainty(self, ax, **kwargs):
@@ -642,19 +639,19 @@ class ObjectBase:
 
     # get information
 
-    def get_inequality_Ab(self, s):
-        # general inequality Ax <= b 
+    # def get_inequality_Ab(self, s):
+    #     # general inequality Ax <= b 
         
-        if self.shape == 'circle':
-            pass
+    #     if self.shape == 'circle':
+    #         pass
             
-        elif self.shape == 'polygon':
-            pass
+    #     elif self.shape == 'polygon':
+    #         pass
 
-        elif self.shape == 'linestring':
-            pass
+    #     elif self.shape == 'linestring':
+    #         pass
         
-        return A, b
+    #     return A, b
 
     def get_vel_range(self):
 
@@ -701,6 +698,10 @@ class ObjectBase:
     @property
     def state(self):
         return self._state
+
+    @property
+    def goal(self):
+        return self._goal
     
     @property
     def position(self):
@@ -716,6 +717,10 @@ class ObjectBase:
     
         return minimum_bounding_radius(self._geometry)
     
+    @property
+    def radius_extend(self):
+        return self.radius + 0.1
+
     @property
     def arrive(self):
         return self.arrive_flag
@@ -740,17 +745,58 @@ class ObjectBase:
 
         return self._geometry.exterior.coords._coords.T
 
+    @property
+    def desired_diff_vel(self, angle_tolerance=0.1, goal_threshold=0.1):
 
-    # @staticmethod
-    # def generate_polygon_vertices(center: Tuple[float, float], avg_radius: float,
-    #                  irregularity: float, spikiness: float,
-    #                  num_vertices: int):
         
-    #     pass
+        distance, radian = relative_position(self._state, self._goal) 
+
+        if distance < goal_threshold:
+            return np.zeros((2, 1))
+
+        diff_radian = WrapToPi( radian - self._state[2, 0] )
+
+        linear = self.vel_max[0, 0] * np.cos(diff_radian)
+
+        if abs(diff_radian) < angle_tolerance:
+            angular = 0
+        else:
+            angular = self.vel_max[1, 0] * np.sign(diff_radian)
+
+        return np.array([[linear], [angular]])
+
+    @property
+    def desired_omni_vel(self, goal_threshold=0.1):
+         
+        dis, radian = relative_position(self.state, self.goal)    
+
+        if dis > goal_threshold:
+            vx = self.vel_max[0, 0] * cos(radian)
+            vy = self.vel_max[1, 0] * sin(radian)
+        else:
+            vx = 0
+            vy = 0
+
+        return np.array([[vx], [vy]])
+    
 
 
+    @property
+    def rvo_neighbors(self):
+        # a list of rvo neighbors [x, y, vx, vy, radius]
+        return [ obj.rvo_neighbor_state for obj in env_param.objects if self.id != obj.id]
+
+    @property
+    def rvo_neighbor_state(self):
+        # x, y, vx, vy, radius
+        return [self._state[0, 0], self._state[1, 0], self.velocity_xy[0, 0], self.velocity_xy[1, 0], self.radius_extend]
+    
+    @property
+    def rvo_state(self):
+        vx_des, vy_des = self.desired_omni_vel[:, 0]
+        # x, y, vx, vy, radius, vx_des, vy_des, theta
+        return [self._state[0, 0], self._state[1, 0], self.velocity_xy[0, 0], self.velocity_xy[1, 0], self.radius_extend, vx_des, vy_des, self._state[2, 0]]
 
 
-
-    # Operators
+        
 
