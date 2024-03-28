@@ -70,17 +70,13 @@ class Lidar2D:
         # object_geometries = GeometryCollection([obj._geometry for obj in env_param.objects])
         # # new_diff_geometry = new_geometry.difference(object_geometries)
         for obj in env_param.objects:
-
             if self.obj_id != obj._id:
                 new_geometry = new_geometry.difference(obj._geometry)
-
-        # self._geometry = new_geometry
 
         coord = get_coordinates(new_geometry)
 
         distances = np.linalg.norm(coord[::2]- self._state[0:2, 0], axis=1)
 
-    
         filtered_indices = np.where(distances < 0.001)[0]
 
         filtered_points = []

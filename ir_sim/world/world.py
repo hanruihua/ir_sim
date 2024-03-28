@@ -94,6 +94,10 @@ class world:
     def time(self):
         return self.count * self.step_time
     
+    @property
+    def buffer_reso(self):
+        return np.max(self.reso)
+    
 
     
 

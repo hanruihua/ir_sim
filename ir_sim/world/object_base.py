@@ -12,7 +12,7 @@ from ir_sim.global_param import world_param, env_param
 from ir_sim.util.util import WrapToRegion, get_transform
 from ir_sim.lib.generation import random_generate_polygon
 from ir_sim.world.sensors.sensor_factory import SensorFactory
-from shapely import Point, Polygon, LineString, minimum_bounding_radius
+from shapely import Point, Polygon, LineString, minimum_bounding_radius, MultiPoint
 
 @dataclass
 class ObjectInfo:
@@ -38,7 +38,7 @@ class ObjectBase:
     id_iter = itertools.count()
     vel_dim = (2, 1)
 
-    def __init__(self, shape: str='circle', shape_tuple=None, state=[0, 0, 0], velocity=[0, 0], goal=[10, 10, 0], kinematics: str='omni', role: str='obstacle', color='k', static=False, vel_min=[-1, -1], vel_max=[1, 1], acce=[inf, inf], angle_range=[-pi, pi], behavior=None, goal_threshold=0.1, sensors=None, kinematics_dict=dict(), arrive_mode='position', description=None, group=0, **kwargs) -> None:
+    def __init__(self, shape: str='circle', shape_tuple=None, state=[0, 0, 0], velocity=[0, 0], goal=[10, 10, 0], kinematics: str='omni', role: str='obstacle', color='k', static=False, vel_min=[-1, -1], vel_max=[1, 1], acce=[inf, inf], angle_range=[-pi, pi], behavior=None, goal_threshold=0.1, sensors=None, kinematics_dict=dict(), arrive_mode='position', description=None, group=0, reso=0.1, **kwargs) -> None:
 
         '''
         parameters:
@@ -74,7 +74,7 @@ class ObjectBase:
 
         self._id = next(ObjectBase.id_iter)
         self._shape = shape
-        self._init_geometry = self.construct_geometry(shape, shape_tuple)
+        self._init_geometry = self.construct_geometry(shape, shape_tuple, reso)
         
         self._state = np.c_[state]
         self._init_state = np.c_[state]
@@ -207,6 +207,9 @@ class ObjectBase:
             
             return cls(shape='linestring', shape_tuple=vertices, **kwargs)
         
+        elif shape_name == 'points':
+            pass
+
         else:
             raise NotImplementedError(f"shape {shape_name} not implemented")
 
@@ -395,7 +398,9 @@ class ObjectBase:
         pass
     
     def mid_process(self, state):
-        state[2, 0] = WrapToRegion(state[2, 0], self.info.angle_range)
+        
+        if state.shape[0] > 2:
+            state[2, 0] = WrapToRegion(state[2, 0], self.info.angle_range)
 
         return state
 
@@ -409,7 +414,7 @@ class ObjectBase:
 
 
 
-    def construct_geometry(self, shape, shape_tuple):
+    def construct_geometry(self, shape, shape_tuple, reso=0.1):
 
         if shape == 'circle':
             geometry = Point([ shape_tuple[0], shape_tuple[1] ]).buffer(shape_tuple[2])
@@ -419,6 +424,9 @@ class ObjectBase:
 
         elif shape == 'linestring':
             geometry = LineString(shape_tuple)
+
+        elif shape == 'points':
+            geometry = MultiPoint(shape_tuple.T).buffer(reso)
 
         else:
             raise ValueError("shape should be one of the following: circle, polygon, linestring")
@@ -494,6 +502,9 @@ class ObjectBase:
                 object_patch.set_zorder(3)
                 ax.add_line(object_patch)
                 # line.remove()
+            
+            elif self.shape == 'points':
+                return 
             
             self.plot_patch_list.append(object_patch)
             # self.plot_patch_list.append(object_patch)

@@ -44,10 +44,10 @@ class EnvBase:
 
         self._robot_collection = object_factory.create_from_parse(env_para.parse['robot'], 'robot')
         self._obstacle_collection = object_factory.create_from_parse(env_para.parse['obstacle'], 'obstacle')
-        self._object_collection = self._robot_collection + self._obstacle_collection
+        self._map_collection = object_factory.create_from_map(self._world.obstacle_positions, self._world.buffer_reso)
+        self._object_collection = self._robot_collection + self._obstacle_collection + self._map_collection
 
         # env parameters
-        
         self._env_plot = EnvPlot(self._world.grid_map, self.objects, self._world.x_range, self._world.y_range, **env_para.parse['plot'])
         env_param.objects = self.objects
         

@@ -4,6 +4,7 @@ from ir_sim.world.robots.robot_acker import RobotAcker
 from ir_sim.world import ObjectBase
 from ir_sim.world.obstacles.obstacle_diff import ObstacleDiff
 from ir_sim.world.obstacles.obstacle_static import ObstacleStatic
+from ir_sim.world.map.obstacle_map import ObstacleMap
 from ir_sim.util.util import convert_list_length, convert_list_length_dict, is_list_of_numbers
 from ir_sim.global_param import env_param 
 import random
@@ -24,6 +25,11 @@ class ObjectFactory:
 
         return object_list
 
+
+    def create_from_map(self, points, reso=0.1):
+        return [ObstacleMap(shape='points', shape_tuple=points, color='k', reso=reso)]
+
+        
 
     def create_object(self, obj_type='robot', number=1, distribution={'name': 'manual'}, state=[1, 1, 0], goal=[1, 9, 0], **kwargs):
 
